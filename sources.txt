@@ -9,3 +9,6 @@ https://irc.dalexhd.dev/index.html
 
 irc documentation
 https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
+
+Socket function explanation
+https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
