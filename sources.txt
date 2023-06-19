@@ -12,3 +12,6 @@ https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
 
 Socket function explanation
 https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
+
+poll() example
+https://www.ibm.com/docs/en/i/7.1?topic=designs-using-poll-instead-select
