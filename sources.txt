@@ -15,3 +15,6 @@ https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
 
 poll() example
 https://www.ibm.com/docs/en/i/7.1?topic=designs-using-poll-instead-select
+
+create local server:
+https://ubuntu.com/tutorials/irc-server#1-overview
