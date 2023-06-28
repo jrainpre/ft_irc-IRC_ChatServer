@@ -1,0 +1,20 @@
+Jacob Sober
+https://www.youtube.com/watch?v=esXw4bdaZkc
+https://www.youtube.com/watch?v=esXw4bdaZkc&list=RDLVesXw4bdaZkc&index=1
+
+
+42 dokumentation 
+https://ircgod.com/
+https://irc.dalexhd.dev/index.html
+
+irc documentation
+https://en.wikipedia.org/wiki/List_of_Internet_Relay_Chat_commands
+
+Socket function explanation
+https://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
+
+poll() example
+https://www.ibm.com/docs/en/i/7.1?topic=designs-using-poll-instead-select
+
+create local server:
+https://ubuntu.com/tutorials/irc-server#1-overview
