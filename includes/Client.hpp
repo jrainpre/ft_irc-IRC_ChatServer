@@ -31,6 +31,7 @@ private:
 	bool _pass_match;
 	bool _is_registered;
 	std::vector<Channel> _channels;
+	std::vector<std::vector<std::string> > _cmds;
 public:
 	Client(int socket_fd);
 	~Client();
