@@ -14,6 +14,23 @@
 #define BUFF_LEN 1024
 #define port 6667
 
+std::vector<std::string> split(std::string s, std::string delimit)
+{
+    size_t pos_start = 0;
+    size_t pos_end;
+    size_t len_delimit = delimit.size();
+    std::string substr;
+    std::vector<std::string> ret;
+
+    while((pos_end = s.find(delimit, pos_start)) != std::string::npos)
+    {
+        substr = s.substr(pos_start, pos_end);
+        ret.push_back(substr);
+        s.erase(pos_start, pos_end + len_delimit);
+    }
+    ret.push_back(s);
+    return ret;
+}
 
 int main(int argc, char **argv)
 {
@@ -96,13 +113,15 @@ int main(int argc, char **argv)
                     client.events = POLLIN;
                     clientSockets.push_back(client);
                     const char *hi = "NOTICE :Welcome to the IRC server!\r\n";
-                    write(client.fd, hi, strlen(hi));
+                    send(client.fd, hi, strlen(hi), MSG_NOSIGNAL);
+                    msg = "451 * :You have not registered\r\n";
+                    send(client.fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
                 }
                 else
                 {
-                    //client wants to write
+                    //client wants to send
                     bzero(buffer, BUFF_LEN);
-                    len = read(clientSockets[i].fd, buffer,  BUFF_LEN - 1); // read one less to null terminate
+                    len = recv(clientSockets[i].fd, buffer,  BUFF_LEN - 1, 0); // recv one less to null terminate
                     if(len <= 0)
                     {
                         //Client lost connection
@@ -111,37 +130,54 @@ int main(int argc, char **argv)
                     else{
                         std::cout << buffer << std::endl;
                         buf = buffer;
-                        if(buf.find("\r\n") != std::string::npos && buf.find("JOIN") != std::string::npos)
-                        {
-                            msg = "451 * :You have not registered\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
-                        }
+                        // if(buf.find("\r\n") != std::string::npos && buf.find("CAP") != std::string::npos)
+                        // {
+                        //     msg = "451 * :You have not registered\r\n";
+                        //     send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
+                        // }
+
+                        // if(buf.find("\r\n") != std::string::npos && buf.find("JOIN") != std::string::npos)
+                        // {
+                        //     msg = "451 * :You have not registered\r\n";
+                        //     send(clientSockets[i].fd, msg.c_str(), msg.size());
+                        // }
+
                         if(buf.find("\r\n") != std::string::npos && buf.find("USER") != std::string::npos)
                         {
                             msg = "001 :Welcome, this is a test\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
 
                             msg = "002 :YourHost, this is a test\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
 
                             msg = "003 :WasCreated, this is a test\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
 
                             msg = "004 :MyInfo, this is a test\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
 
                             msg = "005 :IsSupport, this is a test\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
 
                             msg = "MOTD :Message of day HELLLO\r\n";
-                            write(clientSockets[i].fd, msg.c_str(), msg.size());
+                            send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
                         }
 
-                        // if(buf.find("\r\n") != std::string::npos && buf.find("PING") != std::string::npos)
+                        if(buf.find("\r\n") != std::string::npos && buf.find("PING") != std::string::npos)
+                        {
+                            std::vector<std::string> command = split(buf, " ");
+                            if(command.size() > 1)
+                            {
+                                msg = "PONG " + command[1];
+                                send(clientSockets[i].fd, msg.c_str(), msg.size(), MSG_NOSIGNAL);
+                            }
+                        }
+
+                        // if(buf.find("\r\n") != std::string::npos && buf.find("JOIN") != std::string::npos)
                         // {
-
+                        //     std::vector<std::string> command = split(buf, " ");
+                        //     if(command.size() == 1)
                         // }
-
                     }
                 }
             }
@@ -150,7 +186,3 @@ int main(int argc, char **argv)
     close(serverSocket);
     return (0);
 }
-
-// std::vector<std::string> split(std::string s, std::string delimit)
-// {
-// }
