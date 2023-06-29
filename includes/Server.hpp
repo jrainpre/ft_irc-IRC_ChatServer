@@ -44,5 +44,5 @@ public:
     bool    serverLoop();
     bool    addClient();
     void    handleMessage(int socket_fd);
-
+    void    removeClientAndFd(int fd);
 };

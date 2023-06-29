@@ -108,17 +108,17 @@ void    Server::handleMessage(int socket_fd)
     int     len;
     char    buffer[BUFF_LEN];
     std::string buf;
-    std::vector<std::vector<std::string> > _cmds;  // THIS IS A TMP, LATER IN Client class, once we have find Client func
 
     len = recv(socket_fd, buffer,  BUFF_LEN - 1, 0); // read one less to null terminate
     
     if(len < 0)
     {
-        //Error
+        std::cout << "Error with recv()" << std::endl;
+        return;
     }
     else if(len == 0)
     {
-        //delete Client, get Client by FD and delete from Server::clients & remove from Server::sockets
+        this->removeClientAndFd(socket_fd);
     }
     buffer[len] = 0;
     std::cout << buffer << std::endl;
@@ -126,16 +126,8 @@ void    Server::handleMessage(int socket_fd)
 
     //Below Parses commands into std::vector<std::vector<std::string> >
 
-    if(buf.find("\r\n") == std::string::npos)
-        return;
-    while(!buf.empty())
-        _cmds.push_back(split(buf, "\r\n"));
-    for(int i = 0; i < _cmds.size(); i++)
-    {
-        buf = _cmds[i][0];
-        _cmds.erase(_cmds.begin() + i);
-        _cmds.insert(_cmds.begin() + i, split(buf, " "));
-    }
+    //execCmds();
+
 }
 
 bool    Server::serverLoop()
@@ -170,6 +162,21 @@ bool    Server::serverLoop()
                 }
             }
         }
+    }
+}
+
+void    Server::removeClientAndFd(int fd)
+{
+    for(unsigned long i = 0; i < this->_sockets.size(); i++)
+    {
+        if(fd == this->_sockets[i].fd)
+            this->_sockets.erase(this->_sockets.begin() + i);
+    }
+
+    for(unsigned long i = 0; i < this->_clients.size(); i++)
+    {
+        if(fd == this->_clients[i].getSocketFd());
+            this->_clients.erase(_clients.begin() + i);
     }
 }
 

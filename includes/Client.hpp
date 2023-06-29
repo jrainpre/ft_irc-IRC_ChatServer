@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irc.hpp"
 #include "Channel.hpp"
 #include <string>
 #include <vector>
@@ -32,6 +33,8 @@ private:
 	bool _is_registered;
 	std::vector<Channel> _channels;
 	std::vector<std::vector<std::string> > _cmds;
+	std::string cmdBuf;
+
 public:
 	Client(int socket_fd);
 	~Client();
@@ -41,6 +44,8 @@ public:
 	unsigned int getState();
 	unsigned int getMode();
 	std::vector<Channel> getChannels();
+	int	getSocketFd();
+
 	void setNick(std::string nick);
 	void setUsername(std::string username);
 	void setRealname(std::string realname);
@@ -50,4 +55,7 @@ public:
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
 	bool check_username(std::string username);
+	void parseCmds(std::string &buf);
+	void execCmds();
+	void unregisteredMsgs();
 };
