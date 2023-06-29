@@ -1,5 +1,6 @@
 #include "../includes/Server.hpp"
 
+extern bool g_terminate;
 //Constructers
 
 Server::Server(unsigned int port, std::string password) : _port(port), _password(password), _server_fd(0)
@@ -108,6 +109,8 @@ void    Server::handleMessage(int socket_fd)
     int     len;
     char    buffer[BUFF_LEN];
     std::string buf;
+    Client &activeClient = getClientByFd(socket_fd);
+
 
     len = recv(socket_fd, buffer,  BUFF_LEN - 1, 0); // read one less to null terminate
     
@@ -139,7 +142,7 @@ bool    Server::serverLoop()
 
     std::cout << "Waiting for connections..." << std::endl;
 
-    while(true)
+    while(!g_terminate)
     {
         if(poll(this->_sockets.data(), this->_sockets.size(), -42) < 0)
         {
@@ -178,6 +181,17 @@ void    Server::removeClientAndFd(int fd)
         if(fd == this->_clients[i].getSocketFd());
             this->_clients.erase(_clients.begin() + i);
     }
+}
+
+
+Client &Server::getClientByFd(int fd)
+{
+    for(int i = 0; i < this->_clients.size(); i++)
+    {
+        if(this->_clients[i].getSocketFd() == fd)
+            return this->_clients[i];
+    }
+    throw ExpextionNoMatchingClient();
 }
 
 // //client wants to write

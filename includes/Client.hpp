@@ -43,6 +43,7 @@ public:
 	std::string getRealname();
 	unsigned int getState();
 	unsigned int getMode();
+	int getSocketFd();
 	std::vector<Channel> getChannels();
 	int	getSocketFd();
 
@@ -55,6 +56,7 @@ public:
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
 	bool check_username(std::string username);
+	std::vector<std::vector<std::string> > getCmds();
 	void parseCmds(std::string &buf);
 	void execCmds();
 	void unregisteredMsgs();

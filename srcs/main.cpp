@@ -9,14 +9,25 @@
 #include <stdlib.h>
 #include <poll.h>
 #include <vector>
+#include <signal.h>
 
 #include "../includes/irc.hpp"
+
+bool g_terminate = false;
+
+void signalhandler(int)
+{
+    g_terminate = true;
+    std::cout << "Terminating server..." << std::endl;
+}
+
 
 int main(int argc, char **argv)
 {
     if(argc != 3 || validPort(argv[1]) == 0)
         return errorMsg("Usage: ./ircserv <port> <password>");
     Server server(std::atoi(argv[1]), argv[2]);
+    signal(SIGINT, signalhandler);
     if(server.startServer() == FAILED)
         return 1;
     if(server.serverLoop() == FAILED)
