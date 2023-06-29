@@ -44,5 +44,8 @@ public:
     bool    serverLoop();
     bool    addClient();
     void    handleMessage(int socket_fd);
+    Client& getClientByFd(int socket_fd);
+
+    class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
     void    removeClientAndFd(int fd);
 };

@@ -84,6 +84,16 @@ bool Client::check_username(std::string username)
 
 }
 
+int Client::getSocketFd()
+{
+    return this->_socket_fd;
+}
+
+std::vector<std::vector<std::string> > Client::getCmds()
+{
+    return this->_cmds;
+}
+
 void Client::parseCmds(std::string &buf)
 {
     if(buf.find("\r\n") == std::string::npos)

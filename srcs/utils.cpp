@@ -1,5 +1,6 @@
 #include "../includes/utils.hpp"
 
+
 bool    errorMsg(std::string msg)
 {
     std::cout << msg << std::endl;
