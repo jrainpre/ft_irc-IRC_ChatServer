@@ -45,6 +45,10 @@ public:
     bool    addClient();
     void    handleMessage(int socket_fd);
     Client& getClientByFd(int socket_fd);
+    void    execCmds(Client &active_client);
+    void    unregisteredCmds(Client &active_client);
+    void    sendWelcome(Client &active_client);
+
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
     void    removeClientAndFd(int fd);
