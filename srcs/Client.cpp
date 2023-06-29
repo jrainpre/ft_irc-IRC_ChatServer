@@ -83,3 +83,63 @@ bool Client::check_username(std::string username)
 {
 
 }
+
+void Client::parseCmds(std::string &buf)
+{
+    if(buf.find("\r\n") == std::string::npos)
+        return;
+    while(!buf.empty())
+        this->_cmds.push_back(split(buf, "\r\n"));
+    for(int i = 0; i < this->_cmds.size(); i++)
+    {
+        buf = this->_cmds[i][0];
+        this->_cmds.erase(this->_cmds.begin() + i);
+        this->_cmds.insert(this->_cmds.begin() + i, split(buf, " "));
+    }    
+}
+
+int	Client::getSocketFd()
+{
+    return this->_socket_fd;
+}
+
+void    Client::execCmds()
+{
+    while(this->_cmds.empty() == false)
+    {
+        if(this->_is_registered == false)
+        {
+            
+        }       
+
+
+        this->_cmds.erase(this->_cmds.begin());
+    }
+    
+}
+
+void    Client::unregisteredCmds()
+{
+    std::string msg;
+
+    if(this->_cmds[0].size() > 1 &&  this->_cmds[0][0] == "Nick") //Check first if Nick Exists
+        this->_nick = this->_cmds[0][1];
+    else if(this->_cmds[0].size() > 1 && this->_cmds[0][0] == "USER") //Check first if User exists
+    {
+        this->_username = this->_cmds[0][0];
+        this->_realname = this->_cmds[0][1];
+    }
+    else if(this->_cmds[0].size() > 0 && this->_cmds[0][0] == "JOIN")
+    {
+        msg = "451 * :You have not registered\r\n";
+        write(this->_socket_fd, msg.c_str(), msg.size());
+    }
+
+    if(this->_nick.empty() != true && this->_realname.empty() != true)
+        this->_is_registered = true;
+}
+
+// void    Client::tryRegister()
+// {
+
+// }
