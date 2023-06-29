@@ -108,19 +108,15 @@ void Client::parseCmds(std::string &buf)
     }    
 }
 
-int	Client::getSocketFd()
-{
-    return this->_socket_fd;
-}
-
 void    Client::execCmds()
 {
     while(this->_cmds.empty() == false)
     {
         if(this->_is_registered == false)
         {
-            
-        }       
+            this->unregisteredCmds();
+        }
+          
 
 
         this->_cmds.erase(this->_cmds.begin());
@@ -136,8 +132,8 @@ void    Client::unregisteredCmds()
         this->_nick = this->_cmds[0][1];
     else if(this->_cmds[0].size() > 1 && this->_cmds[0][0] == "USER") //Check first if User exists
     {
-        this->_username = this->_cmds[0][0];
-        this->_realname = this->_cmds[0][1];
+        this->_username = this->_cmds[0][1];
+        this->_realname = this->_cmds[0][2];
     }
     else if(this->_cmds[0].size() > 0 && this->_cmds[0][0] == "JOIN")
     {

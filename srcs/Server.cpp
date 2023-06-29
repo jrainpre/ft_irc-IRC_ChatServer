@@ -129,8 +129,8 @@ void    Server::handleMessage(int socket_fd)
 
     //Below Parses commands into std::vector<std::vector<std::string> >
 
-    //execCmds();
-
+    activeClient.parseCmds(buf);
+    activeClient.execCmds();
 }
 
 bool    Server::serverLoop()
