@@ -21,7 +21,7 @@ bool    validPort(std::string port)
     return 1;
 }
 
-std::vector<std::string> split(std::string &s, std::string delimit)
+std::vector<std::string> split(std::string &s, std::string delimit, bool keepLimiter)
 {
     size_t pos_start = 0;
     size_t pos_end;
@@ -33,6 +33,12 @@ std::vector<std::string> split(std::string &s, std::string delimit)
     {
         substr = s.substr(pos_start, pos_end);
         ret.push_back(substr);
+        if(keepLimiter)
+        {
+            substr = s.substr(pos_end, len_delimit);
+            ret[ret.size() - 1] += " ";
+            ret[ret.size() - 1] += substr;
+        }
         s.erase(pos_start, pos_end + len_delimit);
     }
     if(!s.empty())

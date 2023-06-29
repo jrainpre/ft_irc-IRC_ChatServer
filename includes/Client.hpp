@@ -38,21 +38,30 @@ private:
 public:
 	Client(int socket_fd);
 	~Client();
-	std::string getNick();
-	std::string getUsername();
-	std::string getRealname();
-	unsigned int getState();
-	unsigned int getMode();
-	std::vector<Channel> getChannels();
-	int	getSocketFd();
-	std::vector<std::vector<std::string> > getCmds();
 
-	void setNick(std::string nick);
-	void setUsername(std::string username);
-	void setRealname(std::string realname);
-	void setState(unsigned int state);
-	void setMode(unsigned int mode);
-	void addChannel(Channel channel);
+	//Getter
+	std::string getNick()  {return this->_nick;}
+	std::string getUsername()  {return this->_username;}
+	std::string getRealname()  {return this->_realname;}
+	unsigned int getState()  {return this->_state;}
+	unsigned int getMode() {return this->_mode;}
+	std::vector<Channel> &getChannels() {return this->_channels;}
+	int	getSocketFd() {return this->_socket_fd;}
+	std::vector<std::vector<std::string> > &getCmds() {return this->_cmds;}
+	bool getIsRegistered() {return this->_is_registered;}
+	bool getPassMatch() {return this->_pass_match;}
+
+	//Setter
+	void setNick(const std::string &nick)  {this->_nick = nick;}
+	void setUsername(const std::string &username) {this->_username = username;}
+	void setRealname(const std::string &realname) {this->_realname = realname;}
+	void setState(const unsigned int &state)  {this->_state = state;}
+	void setMode(const unsigned int &mode)  {this->_mode = mode;}
+	void setIsRegistered(bool val) {this->_is_registered = val;}
+	void setPassMatch(bool val) {this->_pass_match = val;}
+	
+	//Functions
+	void addChannel(Channel channel); 
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
 	bool check_username(std::string username);
