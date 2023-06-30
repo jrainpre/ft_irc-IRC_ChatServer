@@ -3,6 +3,7 @@
 #include "utils.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
+#include "numericsMacros.hpp"
 
 #include <string>
 #include <vector>

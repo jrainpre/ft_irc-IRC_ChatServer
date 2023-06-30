@@ -34,6 +34,7 @@ private:
 	std::vector<Channel> _channels;
 	std::vector<std::vector<std::string> > _cmds;
 	std::string cmdBuf;
+	std::string replyCmd;
 
 public:
 	Client(int socket_fd);
@@ -61,6 +62,7 @@ public:
 	void setPassMatch(bool val) {this->_pass_match = val;}
 	
 	//Functions
+	void addReply(std::string msg) {this->replyCmd += msg;};
 	void addChannel(Channel channel); 
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
@@ -68,4 +70,5 @@ public:
 	void parseCmds(std::string &buf);
 	void execCmds();
 	void unregisteredCmds();
+	void sendReply();
 };

@@ -43,6 +43,12 @@ void Client::parseCmds(std::string &buf)
     }
 }
 
+void Client::sendReply()
+{
+    send(this->_socket_fd, this->replyCmd.c_str(), this->replyCmd.size(), MSG_NOSIGNAL);
+    this->replyCmd.clear();
+}
+
 // void    Client::execCmds()
 // {
 //     while(this->_cmds.empty() == false)
@@ -56,7 +62,6 @@ void Client::parseCmds(std::string &buf)
 
 //         this->_cmds.erase(this->_cmds.begin());
 //     }
-    
 // }
 
 // void    Client::unregisteredCmds()

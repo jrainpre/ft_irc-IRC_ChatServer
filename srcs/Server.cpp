@@ -239,12 +239,19 @@ void    Server::unregisteredCmds(Client &active_client)
     {
         active_client.setIsRegistered(true);
         std::cout << "User Registered" << std::endl;
+        this->sendWelcome(active_client);
     }
 }
 
 void    Server::sendWelcome(Client &active_client)
 {
     //Send welcome MSGs, create MACROS first!
+    active_client.addReply(RPL_WELCOME(active_client.getNick(), active_client.getUsername()));
+    active_client.addReply(RPL_YOURHOST((std::string)"localhost",(std::string) "1.0", active_client.getNick()));
+    active_client.addReply(RPL_CREATED((std::string) "2023.09.10", active_client.getNick()));
+    active_client.addReply(RPL_MYINFO((std::string) "localhost", (std::string) "1.0", (std::string) "o", (std::string) "itkol", active_client.getNick()));
+    active_client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 CHANNELLEN=32 NICKLEN=30", active_client.getNick()));
+    active_client.sendReply();
 }
 
 // //client wants to write
