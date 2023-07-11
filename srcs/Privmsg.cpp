@@ -18,7 +18,9 @@ void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
 	//parse message  form client 
 	try
 	{
+		std::string message = getWholeCmd(cmd);
 		std::string recipient = cmd[1];
+		
 
 		
 	}
