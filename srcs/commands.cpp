@@ -1,50 +1,50 @@
 #include "../includes/commands.hpp"
 
-typedef void (*CommandFunction)(Server& server, Client& client);
+typedef void (*CommandFunction)(Server& server, Client& client, std::vector<std::string>  &cmd);
 
-void cmdInvite(Server &server, Client &client)
+void cmdInvite(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdInvite" << std::endl;
 }
 
-void cmdJoin(Server &server, Client &client)
+void cmdJoin(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdJoin" << std::endl;
 	std::string msg = "451 * :you have not registered\r\n";
 	write(client.getSocketFd(),msg.c_str(), msg.size());
 }
 
-void cmdKick(Server &server, Client &client)
+void cmdKick(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdKick" << std::endl;
 }
 
-void cmdKill(Server &server, Client &client)
+void cmdKill(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdKill" << std::endl;
 }
 
-void cmdList(Server &server, Client &client)
+void cmdList(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdList" << std::endl;
 }
 
-void cmdMode(Server &server, Client &client)
+void cmdMode(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdMode" << std::endl;
 }
 
-void cmdMotd(Server &server, Client &client)
+void cmdMotd(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdMotd" << std::endl;
 }
 
-void cmdNames(Server &server, Client &client)
+void cmdNames(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdNames" << std::endl;
 }
 
-void cmdNick(Server &server, Client &client)
+void cmdNick(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdNick" << std::endl;
 	std::vector<std::vector<std::string>> cmds = client.getCmds();
@@ -52,47 +52,47 @@ void cmdNick(Server &server, Client &client)
 		client.setNick(cmds[0][1]);
 }
 
-void cmdNotice(Server &server, Client &client)
+void cmdNotice(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdNotice" << std::endl;
 }
 
-void cmdOper(Server &server, Client &client)
+void cmdOper(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdOper" << std::endl;
 }
 
-void cmdPart(Server &server, Client &client)
+void cmdPart(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdPart" << std::endl;
 }
 
-void cmdPass(Server &server, Client &client)
+void cmdPass(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdPass" << std::endl;
 }
 
-void cmdPing(Server &server, Client &client)
+void cmdPing(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdPing" << std::endl;
 }
 
-void cmdPrivmsg(Server &server, Client &client)
+void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdPrivmsg" << std::endl;
 }
 
-void cmdQuit(Server &server, Client &client)
+void cmdQuit(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdQuit" << std::endl;
 }
 
-void cmdTopic(Server &server, Client &client)
+void cmdTopic(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdTopic" << std::endl;
 }
 
-void cmdUser(Server &server, Client &client)
+void cmdUser(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdUser" << std::endl;
 	std::vector<std::vector<std::string>> cmds = client.getCmds();

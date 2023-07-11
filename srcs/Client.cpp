@@ -109,13 +109,3 @@ Client& Client::operator=(const Client& other) {
 	return *this;
 }
 
-
-
-void Client::registeredCmds()
-{
-	std::map<std::string, CommandFunction> cmd = fillCmd();
-	if (CmdIsValid(_cmds[0][0], cmd))
-		cmd[_cmds[0][0]](this->_server, *this);
-	else
-		std::cout << "Command " << _cmds[0][0] << "is not valid" << std::endl;
-}

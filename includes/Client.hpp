@@ -73,7 +73,6 @@ public:
 	bool check_username(std::string username);
 	void parseCmds(std::string &buf);
 	void execCmds();
-	void unregisteredCmds();
 	void registeredCmds();
 Client& operator=(const Client& other);
 
