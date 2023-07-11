@@ -1,4 +1,5 @@
-#include "../includes/commands.hpp"
+	#include "../includes/commands.hpp"
+	#include "../includes/numericsMacros.hpp"
 
 typedef void (*CommandFunction)(Server& server, Client& client, std::vector<std::string>  &cmd);
 
@@ -15,29 +16,26 @@ std::string getWholeCmd(std::vector<std::string> &cmd)
 
 void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
-	//parse message  form client 
-	try
-	{
 		std::string message = getWholeCmd(cmd);
-		std::string recipient = cmd[1];
-		
-
+		std::string recipient_nick = cmd[1];
+		message = message.substr(message.find_first_of(':'));
+		message.erase(message.find_last_not_of("\r\n"));	
+	// if (server.isValidChannel(recipient_nick))
+	// 	server.sendMessageChannel(recipient_nick, message);
+	if (false)
+	;
+	else
+	{
+		if (!server.isNickInUse(recipient_nick))
+			{
+				client.addReply(ERR_NOSUCHNICK(client.getNick(), recipient_nick));
+				return;
+			}
+		Client &recipient_client = server.getClientByNick(recipient_nick);
+		recipient_client.addReply(SENDPRIVMSG(client.getNick(), client.getUsername(), recipient_client.getNick(), message));
 		
 	}
-	catch(const std::exception& e){}
-	
 
-	//PRIVMSG recipient :Hello, how are you?
-PRIVMSG
-recipient
-:Hello,
-how
-are
-you?
-	//check if recipient is a channel
-	//if yes --> send message to channel
-	//if no --> check if recipient is a valid nickname of an online user
-	//
 }
 
 

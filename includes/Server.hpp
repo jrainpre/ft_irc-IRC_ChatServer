@@ -51,6 +51,7 @@ public:
     void    handleMessage(int socket_fd);
     Client& getClientByFd(int socket_fd);
     void    cmdLoop(Client &client);
+	Client& getClientByNick(std::string nick);
     void    execCmd(Client &client);
     //void    unregisteredCmds(Client &active_client);
     void    sendWelcome(Client &active_client);
@@ -59,6 +60,7 @@ public:
     bool    channelExists(std::string &name);
     void    joinChannel(Client &client, std::string &channel, std::string &key);
     void    createChannel(Client &client, std::string &channel, std::string &key);
+	bool	isNickInUse(std::string &nick);
 
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
