@@ -77,10 +77,10 @@ void cmdPing(Server& server, Client& client, std::vector<std::string>  &cmd)
 	std::cout << "cmdPing" << std::endl;
 }
 
-void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
-{
-	std::cout << "cmdPrivmsg" << std::endl;
-}
+// void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
+// {
+// 	std::cout << "cmdPrivmsg" << std::endl;
+// }
 
 void cmdQuit(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
@@ -105,29 +105,28 @@ void cmdUser(Server& server, Client& client, std::vector<std::string>  &cmd)
 	std::cout << client.getRealname() << std::endl;
 }
 
-
 std::map<std::string, CommandFunction> fillCmd()
 {
     std::map<std::string, CommandFunction> cmd;
 
 	cmd["INVITE"] = cmdInvite;
-	cmd["JOIN"] = cmdJoin;
+	cmd["JOIN"] = join;
 	cmd["KICK"] = cmdKick;
 	cmd["KILL"] = cmdKill;
 	cmd["LIST"] = cmdList;
 	cmd["MODE"] = cmdMode;
 	cmd["MOTD"] = cmdMotd;
 	cmd["NAMES"] = cmdNames;
-	cmd["NICK"] = cmdNick;
+	cmd["NICK"] = nick;
 	cmd["NOTICE"] = cmdNotice;
 	cmd["OPER"] = cmdOper;
 	cmd["PART"] = cmdPart;
-	cmd["PASS"] = cmdPass;
-	cmd["PING"] = cmdPing;
+	cmd["PASS"] = pass;
+	cmd["PING"] = ping;
 	cmd["PRIVMSG"] = cmdPrivmsg;
 	cmd["QUIT"] = cmdQuit;
 	cmd["TOPIC"] = cmdTopic;
-	cmd["USER"] = cmdUser;
+	cmd["USER"] = user;
     return cmd;
 }
 
@@ -135,5 +134,3 @@ bool CmdIsValid(std::string cmd_string, std::map<std::string, CommandFunction>& 
 {
     return cmd.find(cmd_string) != cmd.end();
 }
-
-

@@ -19,6 +19,7 @@
 #define BUFF_LEN 1024
 
 class Client;
+class Channel;
 
 class Server {
 private:
@@ -26,6 +27,7 @@ private:
 	std::string _password;
     unsigned int _server_fd;
     std::vector<Client> _clients;
+    std::vector<Channel> _channels;
     std::vector <struct pollfd> _sockets;
 public:
     //Constructors
@@ -37,6 +39,7 @@ public:
 	unsigned int getPort();
     unsigned int getSocketFd();
     std::vector<Client> &getClients(){return this->_clients;}
+    std::vector<Channel> &getChannels(){return this->_channels;}
     
     //Setters
     void    setSocketFd(unsigned int fd);
@@ -47,9 +50,15 @@ public:
     bool    addClient();
     void    handleMessage(int socket_fd);
     Client& getClientByFd(int socket_fd);
-    void    execCmds(Client &active_client);
-    void    unregisteredCmds(Client &active_client);
+    void    cmdLoop(Client &client);
+    void    execCmd(Client &client);
+    //void    unregisteredCmds(Client &active_client);
     void    sendWelcome(Client &active_client);
+    bool    isUnregisteredCheck(Client &client, std::string cmd);
+
+    bool    channelExists(std::string &name);
+    void    joinChannel(Client &client, std::string &channel, std::string &key);
+    void    createChannel(Client &client, std::string &channel, std::string &key);
 
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
