@@ -56,6 +56,7 @@ public:
 	std::vector<std::vector<std::string> > &getCmds() {return this->_cmds;}
 	bool getIsRegistered() {return this->_is_registered;}
 	bool getPassMatch() {return this->_pass_match;}
+	bool getIsWelcomeSend(){return this->_is_welcome_send;}
 	Server &getServer(){return this->_server;}
 
 	//Setter

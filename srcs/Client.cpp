@@ -46,8 +46,11 @@ void Client::parseCmds(std::string &buf)
 
 void Client::sendReply()
 {
-    send(this->_socket_fd, this->replyCmd.c_str(), this->replyCmd.size(), MSG_NOSIGNAL);
-    this->replyCmd.clear();
+	if(this->replyCmd.empty() == false)
+	{
+    	send(this->_socket_fd, this->replyCmd.c_str(), this->replyCmd.size(), MSG_NOSIGNAL);
+    	this->replyCmd.clear();
+	}
 }
 
 // void    Client::execCmds()

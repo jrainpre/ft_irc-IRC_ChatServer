@@ -132,7 +132,7 @@ void    Server::handleMessage(int socket_fd)
 		//Below Parses commands into std::vector<std::vector<std::string> >
 
 		active_client.parseCmds(buf);
-		this->execCmds(active_client);
+		this->cmdLoop(active_client);
 	}
 	catch(const std::exception& e)
 	{
@@ -200,19 +200,15 @@ Client &Server::getClientByFd(int fd)
     throw ExpextionNoMatchingClient();
 }
 
-void    Server::execCmds(Client &active_client)
+void    Server::cmdLoop(Client &client)
 {
-    while(active_client.getCmds().empty() == false)
+    while(client.getCmds().empty() == false)
     {
-        // if(active_client.getIsRegistered() == false)
-        // {
-        //     this->unregisteredCmds(active_client);
-        // }
-        
-
-
-        active_client.getCmds().erase(active_client.getCmds().begin());
+        execCmd(client);
+        client.getCmds().erase(client.getCmds().begin());
     }
+    client.sendReply();
+    this->sendWelcome(client);
 }
 
 // void    Server::unregisteredCmds(Client &active_client)
@@ -250,59 +246,43 @@ void    Server::execCmds(Client &active_client)
 //     }
 // }
 
-void    Server::sendWelcome(Client &active_client)
+void    Server::sendWelcome(Client &client)
 {
     //Send welcome MSGs, create MACROS first!
-    active_client.addReply(RPL_WELCOME(active_client.getNick(), active_client.getUsername()));
-    active_client.addReply(RPL_YOURHOST((std::string)"localhost",(std::string) "1.0", active_client.getNick()));
-    active_client.addReply(RPL_CREATED((std::string) "2023.09.10", active_client.getNick()));
-    active_client.addReply(RPL_MYINFO((std::string) "localhost", (std::string) "1.0", (std::string) "o", (std::string) "itkol", active_client.getNick()));
-    active_client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 CHANNELLEN=32 NICKLEN=30", active_client.getNick()));
-    active_client.sendReply();
+    if(client.getIsRegistered() == false && client.getIsWelcomeSend() == false && 
+        client.getNick().empty() != true && client.getUsername().empty() != true && client.getPassMatch() == true)
+    {
+        client.addReply(RPL_WELCOME(client.getNick(), client.getUsername()));
+        client.addReply(RPL_YOURHOST((std::string)"localhost",(std::string) "1.0", client.getNick()));
+        client.addReply(RPL_CREATED((std::string) "2023.09.10", client.getNick()));
+        client.addReply(RPL_MYINFO((std::string) "localhost", (std::string) "1.0", (std::string) "o", (std::string) "itkol", client.getNick()));
+        client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 CHANNELLEN=32 NICKLEN=30", client.getNick()));
+        client.sendReply();
+    }
 }
 
-void Server::registeredCmds(Client &client)
+bool    Server::isUnregisteredCheck(Client &client, std::string cmd)
 {
-	std::map<std::string, CommandFunction> cmd = fillCmd();
-	if (CmdIsValid(client.getCmds()[0][0], cmd))
-		cmd[client.getCmds()[0][0]](*this, client, client.getCmds()[0]);
-	else
-		std::cout << "Command " << client.getCmds()[0][0] << "is not valid" << std::endl;
+    if(client.getIsRegistered() == false)
+    {
+        if(cmd != "JOIN" && cmd != "USER" && cmd != "NICK" && cmd != "PASS" && cmd != "CAP")
+        {
+            std::cout << "Command " << cmd << "is not valid, Client not Registered yet" << std::endl;
+            return false;
+        }
+    }
+    return true;
 }
 
-// //client wants to write
-//                     bzero(buffer, BUFF_LEN);
-//                     len = read(clientSockets[i].fd, buffer,  BUFF_LEN - 1); // read one less to null terminate
-//                     if(len <= 0)
-//                     {
-//                         //Client lost connection
-//                         clientSockets.erase(clientSockets.begin() + i);
-//                     }
-//                     else{
-//                         std::cout << buffer << std::endl;
-//                         buf = buffer;
-//                         if(buf.find("\r\n") != std::string::npos && buf.find("JOIN") != std::string::npos)
-//                         {
-//                             msg = "451 * :You have not registered\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-//                         }
-//                         if(buf.find("\r\n") != std::string::npos && buf.find("USER") != std::string::npos)
-//                         {
-//                             msg = "001 :Welcome, this is a test\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
+void Server::execCmd(Client &client)
+{
+	std::map<std::string, CommandFunction> cmdMap = fillCmd();
+    std::string cmd = client.getCmds()[0][0];
 
-//                             msg = "002 :YourHost, this is a test\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-
-//                             msg = "003 :WasCreated, this is a test\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-
-//                             msg = "004 :MyInfo, this is a test\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-
-//                             msg = "005 :IsSupport, this is a test\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-
-//                             msg = "MOTD :Message of day HELLLO\r\n";
-//                             write(clientSockets[i].fd, msg.c_str(), msg.size());
-//                         }
+    if(isUnregisteredCheck(client, cmd) == false)
+        return;
+	if (CmdIsValid(cmd, cmdMap))
+		cmdMap[cmd](*this, client, client.getCmds()[0]);
+	else
+		std::cout << "Command " << cmd << "is not valid" << std::endl;
+}
