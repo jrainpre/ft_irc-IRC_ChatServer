@@ -53,4 +53,6 @@ public:
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
     void    removeClientAndFd(int fd);
+	void unregisteredCmds();
+	void registeredCmds(Client &active_client);
 };

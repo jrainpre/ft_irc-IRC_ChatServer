@@ -260,6 +260,15 @@ void    Server::sendWelcome(Client &active_client)
     active_client.sendReply();
 }
 
+void Server::registeredCmds(Client &client)
+{
+	std::map<std::string, CommandFunction> cmd = fillCmd();
+	if (CmdIsValid(client.getCmds()[0][0], cmd))
+		cmd[client.getCmds()[0][0]](*this, client, client.getCmds()[0]);
+	else
+		std::cout << "Command " << client.getCmds()[0][0] << "is not valid" << std::endl;
+}
+
 // //client wants to write
 //                     bzero(buffer, BUFF_LEN);
 //                     len = read(clientSockets[i].fd, buffer,  BUFF_LEN - 1); // read one less to null terminate
