@@ -200,6 +200,26 @@ Client &Server::getClientByFd(int fd)
     throw ExpextionNoMatchingClient();
 }
 
+Client &Server::getClientByNick(std::string nick)
+{
+	for(int i = 0; i < this->_clients.size(); i++)
+	{
+		if(this->_clients[i].getNick() == nick)
+			return this->_clients[i];
+	}
+	throw ExpextionNoMatchingClient();
+}
+
+bool    Server::isNickInUse(std::string &nick)
+{
+    for(int i = 0; i < this->getClients().size(); i++)
+    {
+        if(this->getClients()[i].getNick() == nick)
+            return FAILED;
+    }
+    return WORKED;
+}
+
 void    Server::cmdLoop(Client &client)
 {
     while(client.getCmds().empty() == false)
