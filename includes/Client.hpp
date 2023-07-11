@@ -34,6 +34,7 @@ private:
 	unsigned int _mode;
 	bool _pass_match;
 	bool _is_registered;
+	bool _is_welcome_send;
 	std::vector<Channel> _channels;
 	std::vector<std::vector<std::string> > _cmds;
 	std::string cmdBuf;
@@ -55,6 +56,7 @@ public:
 	std::vector<std::vector<std::string> > &getCmds() {return this->_cmds;}
 	bool getIsRegistered() {return this->_is_registered;}
 	bool getPassMatch() {return this->_pass_match;}
+	Server &getServer(){return this->_server;}
 
 	//Setter
 	void setNick(const std::string &nick)  {this->_nick = nick;}

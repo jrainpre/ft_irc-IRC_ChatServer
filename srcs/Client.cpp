@@ -1,7 +1,7 @@
 #include "../includes/Client.hpp"
 #include "../includes/commands.hpp"
 
-Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _state(0), _mode(0), _server(server)
+Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _state(0), _mode(0), _server(server), _is_welcome_send(false)
 {
     std::cout << "Client Created" << std::endl;
 }
