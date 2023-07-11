@@ -21,6 +21,24 @@ bool    validPort(std::string port)
     return 1;
 }
 
+std::string getSubstr(std::string &str, std::string del)
+{
+    size_t pos_end;
+    size_t len_del = del.size();
+    std::string ret;
+    if(str.empty())
+        return ret;
+    if(pos_end = str.find(del, 0) != std::string::npos)
+    {
+        ret = str;
+        str.clear();
+        return ret;
+    }
+    ret = str.substr(0, pos_end);
+    str.erase(0, pos_end + len_del);
+    return ret;
+}
+
 std::vector<std::string> split(std::string &s, std::string delimit, bool keepLimiter)
 {
     size_t pos_start = 0;

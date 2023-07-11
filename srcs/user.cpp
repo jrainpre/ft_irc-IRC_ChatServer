@@ -42,7 +42,7 @@ void    user(Server &server, Client &client, std::vector<std::string> &cmd)
     }
     if(cmd.size() < 2)
     {
-        client.addReply(ERR_NEEDMOREPARAMS(client.getNick(), "user"));
+        client.addReply(ERR_NEEDMOREPARAMS(client.getNick(), "USER"));
         return;
     }
     client.setUsername(cmd[1]);

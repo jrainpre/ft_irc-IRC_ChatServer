@@ -211,47 +211,13 @@ void    Server::cmdLoop(Client &client)
     this->sendWelcome(client);
 }
 
-// void    Server::unregisteredCmds(Client &active_client)
-// {
-//     std::string msg;
-
-//     if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "PASS")
-//     {
-//         if(active_client.getCmds()[0][1] == this->_password)
-//         {
-//             active_client.setPassMatch(true);
-//             std::cout << "Correct Password" << std::endl;
-//         }
-//         else
-//             std::cout << "Wrong Password" << std::endl;
-//     }
-//     else if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "NICK") //Check first if Nick Exists
-//         active_client.setNick(active_client.getCmds()[0][1]);
-//     else if(active_client.getCmds()[0].size() > 1 && active_client.getCmds()[0][0] == "USER") //Check first if User exists
-//     {
-//         active_client.setUsername(active_client.getCmds()[0][1]);
-//         active_client.setRealname(active_client.getCmds()[0][2]);
-//     }
-//     else if(active_client.getCmds()[0].size() > 0 && active_client.getCmds()[0][0] == "JOIN")
-//     {
-//         msg = "451 * :You have not registered\r\n";
-//         write(active_client.getSocketFd(), msg.c_str(), msg.size());
-//     }
-
-//     if(active_client.getNick().empty() != true && active_client.getUsername().empty() != true && active_client.getPassMatch() == true)
-//     {
-//         active_client.setIsRegistered(true);
-//         std::cout << "User Registered" << std::endl;
-//         this->sendWelcome(active_client);
-//     }
-// }
-
 void    Server::sendWelcome(Client &client)
 {
     //Send welcome MSGs, create MACROS first!
     if(client.getIsRegistered() == false && client.getIsWelcomeSend() == false && 
         client.getNick().empty() != true && client.getUsername().empty() != true && client.getPassMatch() == true)
     {
+        client.setIsRegistered(true);
         client.addReply(RPL_WELCOME(client.getNick(), client.getUsername()));
         client.addReply(RPL_YOURHOST((std::string)"localhost",(std::string) "1.0", client.getNick()));
         client.addReply(RPL_CREATED((std::string) "2023.09.10", client.getNick()));
@@ -285,4 +251,30 @@ void Server::execCmd(Client &client)
 		cmdMap[cmd](*this, client, client.getCmds()[0]);
 	else
 		std::cout << "Command " << cmd << "is not valid" << std::endl;
+}
+
+bool Server::channelExists(std::string &name)
+{
+    for(int i = 0; i < this->getChannels().size(); i++)
+    {
+        if(this->getChannels()[i].getName() == name)
+            return true;
+    }
+    return false;
+}
+
+void    Server::joinChannel(Client &client, std::string &channel, std::string &key)
+{
+    for(int i = 0; i < this->getChannels().size(); i++)
+    {
+        if(this->getChannels()[i].getName() == channel)
+        {
+            this->getChannels()[i].addUser(client, key);
+        }
+    }
+}
+
+void    Server::createChannel(Client &client, std::string &channel, std::string &key)
+{
+    Channel ch(channel);
 }

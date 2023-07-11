@@ -16,10 +16,10 @@
 
 //Pass ErrorMsg
 
-#define ERR_PASSWDMISMATCH(client) (":localhost 464 " + client + " :Password incorrect")
-#define ERR_ALREADYREGISTERED(client) (":localhost 462 " + client + " :You may not reregister")
+#define ERR_PASSWDMISMATCH(client) (":localhost 464 " + client + " :Password incorrect\r\n")
+#define ERR_ALREADYREGISTERED(client) (":localhost 462 " + client + " :You may not reregister\r\n")
 
 //Join
 
-#define ERR_NOTREGISTERED(client) (":localhost 451 " + client + " :You have not registered")
-#define ERR_NEEDMOREPARAMS(client, command) (":localhost 461 " + client + " " + command + " :Not enough parameters")
+#define ERR_NOTREGISTERED(client) (":localhost 451 " + client + " :You have not registered\r\n")
+#define ERR_NEEDMOREPARAMS(client, command) (":localhost 461 " + client + " " + command + " :Not enough parameters\r\n")
