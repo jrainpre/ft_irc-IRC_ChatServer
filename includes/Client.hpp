@@ -2,10 +2,12 @@
 
 #include "irc.hpp"
 #include "Channel.hpp"
+#include "Server.hpp"
 #include <string>
 #include <vector>
 #include <stdlib.h>
 #include <iostream>
+#include <map>
 
 // enum class ClientState {
 // 	CONNECTED,
@@ -15,6 +17,7 @@
 // };
 
 class Channel;
+class Server;
 
 enum class ClientMode {
 	OPERATOR,
@@ -34,10 +37,11 @@ private:
 	std::vector<Channel> _channels;
 	std::vector<std::vector<std::string> > _cmds;
 	std::string cmdBuf;
+	Server &_server;
 	std::string replyCmd;
 
 public:
-	Client(int socket_fd);
+	Client(int socket_fd, Server &server);
 	~Client();
 
 	//Getter
@@ -70,5 +74,11 @@ public:
 	void parseCmds(std::string &buf);
 	void execCmds();
 	void unregisteredCmds();
+	void registeredCmds();
+Client& operator=(const Client& other);
+
+
 	void sendReply();
 };
+
+

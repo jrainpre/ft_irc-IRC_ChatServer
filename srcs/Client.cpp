@@ -1,6 +1,7 @@
 #include "../includes/Client.hpp"
+#include "../includes/commands.hpp"
 
-Client::Client(int socket_fd): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _state(0), _mode(0)
+Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _state(0), _mode(0), _server(server)
 {
     std::cout << "Client Created" << std::endl;
 }
@@ -68,17 +69,11 @@ void Client::sendReply()
 // {
 //     std::string msg;
 
-//     if(this->_cmds[0].size() > 1 &&  this->_cmds[0][0] == "PASS")
-//     {
-//         if(this->_cmds[0][1] == this->_server_password)
-//         {
-//             this->_pass_match = true;
-//             std::cout << "Correct Password" << std::endl;
-//         }
-//         else
-//             std::cout << "Wrong Password" << std::endl;
-//     }
-//     else if(this->_cmds[0].size() > 1 &&  this->_cmds[0][0] == "NICK") //Check first if Nick Exists
+// void    Client::unregisteredCmds()
+// {
+//     std::string msg;
+
+//     if(this->_cmds[0].size() > 1 &&  this->_cmds[0][0] == "Nick") //Check first if Nick Exists
 //         this->_nick = this->_cmds[0][1];
 //     else if(this->_cmds[0].size() > 1 && this->_cmds[0][0] == "USER") //Check first if User exists
 //     {
@@ -91,14 +86,36 @@ void Client::sendReply()
 //         write(this->_socket_fd, msg.c_str(), msg.size());
 //     }
 
-//     if(this->_nick.empty() != true && this->_realname.empty() != true && this->_pass_match == true)
-//     {
+//     if(this->_nick.empty() != true && this->_realname.empty() != true)
 //         this->_is_registered = true;
-//         std::cout << "User Registered" << std::endl;
-//     }
 // }
 
-// void    Client::tryRegister()
-// {
 
-// }
+
+Client& Client::operator=(const Client& other) {
+	_socket_fd = other._socket_fd;
+	_nick = other._nick;
+	_username = other._username;
+	_realname = other._realname;
+	_state = other._state;
+	_mode = other._mode;
+	_pass_match = other._pass_match;
+	_is_registered = other._is_registered;
+	_channels = other._channels;
+	_cmds = other._cmds;
+	cmdBuf = other.cmdBuf;
+	_server = other._server;
+	
+	return *this;
+}
+
+
+
+void Client::registeredCmds()
+{
+	std::map<std::string, CommandFunction> cmd = fillCmd();
+	if (CmdIsValid(_cmds[0][0], cmd))
+		cmd[_cmds[0][0]](this->_server, *this);
+	else
+		std::cout << "Command " << _cmds[0][0] << "is not valid" << std::endl;
+}

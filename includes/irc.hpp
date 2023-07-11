@@ -1,5 +1,6 @@
 #pragma once
 
+#include "commands.hpp"
 #include "utils.hpp"
 #include "Server.hpp"
 #include "Client.hpp"

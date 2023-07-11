@@ -13,6 +13,20 @@
 
 #include "../includes/irc.hpp"
 
+
+
+void testfunc(Server &server, Client &client)
+{
+    std::cout << "testfunc" << std::endl;
+}
+
+std::map<std::string, void (*)(Server &server, Client &client)> cmdHandler()
+{
+    std::map<std::string, void (*)(Server &server, Client &client)> cmd;
+    cmd["Test"] = testfunc;
+    return cmd;
+}
+
 bool g_terminate = false;
 
 void signalhandler(int)
@@ -24,6 +38,7 @@ void signalhandler(int)
 
 int main(int argc, char **argv)
 {
+
     if(argc != 3 || validPort(argv[1]) == 0)
         return errorMsg("Usage: ./ircserv <port> <password>");
     Server server(std::atoi(argv[1]), argv[2]);

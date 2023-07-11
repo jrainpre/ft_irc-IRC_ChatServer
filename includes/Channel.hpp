@@ -22,4 +22,6 @@ public:
 	void addUser(Client user);
 	void removeUser(Client user);
 	bool check_channel_name(std::string name);
+
+
 };

@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <poll.h>
 #include <vector>
+#include <map>
 
 #define MAX_CLIENTS 100
 #define BUFF_LEN 1024

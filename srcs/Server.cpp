@@ -100,7 +100,7 @@ bool    Server::addClient()
     this->_sockets.push_back(pollClient);
     const char *hi = "NOTICE :Welcome to the IRC server!\r\n";
     write(pollClient.fd, hi, strlen(hi));
-    Client newClient(pollClient.fd);
+    Client newClient(pollClient.fd, *this);
     this->_clients.push_back(newClient);
 }
 
@@ -109,28 +109,34 @@ void    Server::handleMessage(int socket_fd)
     int     len;
     char    buffer[BUFF_LEN];
     std::string buf;
-    Client &active_client = getClientByFd(socket_fd);
+	try
+	{
+		Client &active_client = getClientByFd(socket_fd);
 
+		len = recv(socket_fd, buffer,  BUFF_LEN - 1, 0); // read one less to null terminate
 
-    len = recv(socket_fd, buffer,  BUFF_LEN - 1, 0); // read one less to null terminate
-    
-    if(len < 0)
-    {
-        std::cout << "Error with recv()" << std::endl;
-        return;
-    }
-    else if(len == 0)
-    {
-        this->removeClientAndFd(socket_fd);
-    }
-    buffer[len] = 0;
-    std::cout << buffer << std::endl;
-    buf = buffer;
+		if(len < 0)
+		{
+			std::cout << "Error with recv()" << std::endl;
+			return;
+		}
+		else if(len == 0)
+		{
+			this->removeClientAndFd(socket_fd);
+		}
+		buffer[len] = 0;
+		std::cout << buffer << std::endl;
+		buf = buffer;
 
-    //Below Parses commands into std::vector<std::vector<std::string> >
+		//Below Parses commands into std::vector<std::vector<std::string> >
 
-    active_client.parseCmds(buf);
-    this->execCmds(active_client);
+		active_client.parseCmds(buf);
+		this->execCmds(active_client);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 }
 
 bool    Server::serverLoop()
