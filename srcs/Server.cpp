@@ -123,6 +123,7 @@ void    Server::handleMessage(int socket_fd)
 		else if(len == 0)
 		{
 			this->removeClientAndFd(socket_fd);
+            return;
 		}
 		buffer[len] = 0;
 		std::cout << buffer << std::endl;
@@ -203,51 +204,51 @@ void    Server::execCmds(Client &active_client)
 {
     while(active_client.getCmds().empty() == false)
     {
-        if(active_client.getIsRegistered() == false)
-        {
-            this->unregisteredCmds(active_client);
-        }
-          
+        // if(active_client.getIsRegistered() == false)
+        // {
+        //     this->unregisteredCmds(active_client);
+        // }
+        
 
 
         active_client.getCmds().erase(active_client.getCmds().begin());
     }
 }
 
-void    Server::unregisteredCmds(Client &active_client)
-{
-    std::string msg;
+// void    Server::unregisteredCmds(Client &active_client)
+// {
+//     std::string msg;
 
-    if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "PASS")
-    {
-        if(active_client.getCmds()[0][1] == this->_password)
-        {
-            active_client.setPassMatch(true);
-            std::cout << "Correct Password" << std::endl;
-        }
-        else
-            std::cout << "Wrong Password" << std::endl;
-    }
-    else if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "NICK") //Check first if Nick Exists
-        active_client.setNick(active_client.getCmds()[0][1]);
-    else if(active_client.getCmds()[0].size() > 1 && active_client.getCmds()[0][0] == "USER") //Check first if User exists
-    {
-        active_client.setUsername(active_client.getCmds()[0][1]);
-        active_client.setRealname(active_client.getCmds()[0][2]);
-    }
-    else if(active_client.getCmds()[0].size() > 0 && active_client.getCmds()[0][0] == "JOIN")
-    {
-        msg = "451 * :You have not registered\r\n";
-        write(active_client.getSocketFd(), msg.c_str(), msg.size());
-    }
+//     if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "PASS")
+//     {
+//         if(active_client.getCmds()[0][1] == this->_password)
+//         {
+//             active_client.setPassMatch(true);
+//             std::cout << "Correct Password" << std::endl;
+//         }
+//         else
+//             std::cout << "Wrong Password" << std::endl;
+//     }
+//     else if(active_client.getCmds()[0].size() > 1 &&  active_client.getCmds()[0][0] == "NICK") //Check first if Nick Exists
+//         active_client.setNick(active_client.getCmds()[0][1]);
+//     else if(active_client.getCmds()[0].size() > 1 && active_client.getCmds()[0][0] == "USER") //Check first if User exists
+//     {
+//         active_client.setUsername(active_client.getCmds()[0][1]);
+//         active_client.setRealname(active_client.getCmds()[0][2]);
+//     }
+//     else if(active_client.getCmds()[0].size() > 0 && active_client.getCmds()[0][0] == "JOIN")
+//     {
+//         msg = "451 * :You have not registered\r\n";
+//         write(active_client.getSocketFd(), msg.c_str(), msg.size());
+//     }
 
-    if(active_client.getNick().empty() != true && active_client.getUsername().empty() != true && active_client.getPassMatch() == true)
-    {
-        active_client.setIsRegistered(true);
-        std::cout << "User Registered" << std::endl;
-        this->sendWelcome(active_client);
-    }
-}
+//     if(active_client.getNick().empty() != true && active_client.getUsername().empty() != true && active_client.getPassMatch() == true)
+//     {
+//         active_client.setIsRegistered(true);
+//         std::cout << "User Registered" << std::endl;
+//         this->sendWelcome(active_client);
+//     }
+// }
 
 void    Server::sendWelcome(Client &active_client)
 {

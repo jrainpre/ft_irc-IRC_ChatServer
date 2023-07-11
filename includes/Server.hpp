@@ -36,6 +36,7 @@ public:
     std::string getPassword();
 	unsigned int getPort();
     unsigned int getSocketFd();
+    std::vector<Client> &getClients(){return this->_clients;}
     
     //Setters
     void    setSocketFd(unsigned int fd);

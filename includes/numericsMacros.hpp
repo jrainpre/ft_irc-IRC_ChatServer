@@ -10,6 +10,16 @@
 
 //Nick ErrorMsgs
 
-#define ERR_NONICKNAMEGIVEN(nick) (":localhost 431 " + nick + " :No nickname given\r\n")
-#define ERR_ERRONEUSNICKNAME(nick ,newNick) (":localhost 432 " + nick + " " + newNick + " :Erroneus nickname\r\n")
-#define ERR_NICKNAMEINUSE(nick ,newNick) (":localhost 433 " + nick + " " + newNick + " :Nickname is already in use\r\n")
+#define ERR_NONICKNAMEGIVEN(client) (":localhost 431 " + client + " :No nickname given\r\n")
+#define ERR_ERRONEUSNICKNAME(client ,newNick) (":localhost 432 " + client + " " + newNick + " :Erroneus nickname\r\n")
+#define ERR_NICKNAMEINUSE(client ,newNick) (":localhost 433 " + client + " " + newNick + " :Nickname is already in use\r\n")
+
+//Pass ErrorMsg
+
+#define ERR_PASSWDMISMATCH(client) (":localhost 464 " + client + " :Password incorrect")
+#define ERR_ALREADYREGISTERED(client) (":localhost 462 " + client + " :You may not reregister")
+
+//Join
+
+#define ERR_NOTREGISTERED(client) (":localhost 451 " + client + " :You have not registered")
+#define ERR_NEEDMOREPARAMS(client, command) (":localhost 461 " + client + " " + command + " :Not enough parameters")

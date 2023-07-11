@@ -25,29 +25,43 @@
 //     ERR_ERRONEUSNICKNAME (432)
 //     ERR_NICKNAMEINUSE (433)
 //     ERR_NICKCOLLISION (436)
-bool    isNickInUse(Client &client, std::vector<std::string> &cmd)
-{
 
+bool    isNickInUse(Server &server, std::string &nick)
+{
+    for(int i = 0; i < server.getClients().size(); i++)
+    {
+        if(server.getClients()[i].getNick() == nick)
+            return FAILED;
+    }
+    return WORKED;
 }
 
-bool    isValidNick(Client &client, std::string &nick)
+bool    isValidNick(std::string &nick)
 {
     if(nick[0] == ':' || nick[0] == '#' || nick[0] == ' ')
-        return false;
+        return FAILED;
     if(nick.size() > 30)
-        return false;
+        return FAILED;
 }
 
-void    nick(Client &client, std::vector<std::string> &cmd)
+//have to check the "Client" in error msg when no nick name is given
+void    nick(Server &server, Client &client, std::vector<std::string> &cmd)
 {
     if(cmd.size() == 1)
     {
         client.addReply(ERR_NONICKNAMEGIVEN(client.getNick()));
         return;
     }
-    if(isValidNick(client, cmd[1]) == false)
+    std::string nick = cmd[1];
+    if(isValidNick(nick) == FAILED)
     {
-        client.addReply(ERR_ERRONEUSNICKNAME(client.getNick(), cmd[1]));
+        client.addReply(ERR_ERRONEUSNICKNAME(client.getNick(), nick));
         return;
     }
+    if(isNickInUse(server, nick) == FAILED)
+    {
+        client.addReply(ERR_NICKNAMEINUSE(client.getNick(), nick));
+        return;
+    }
+    client.setNick(nick);
 }
