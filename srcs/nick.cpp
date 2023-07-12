@@ -63,5 +63,9 @@ void    nick(Server &server, Client &client, std::vector<std::string> &cmd)
             client.addReply(ERR_NICKNAMEINUSE(client.getNick(), nick));
     }
     else
+    {
+        if(client.getIsRegistered() == true)
+            client.addReply(":" + client.getNick() + "!localhost NICK " + nick + "\r\n");
         client.setNick(nick);
+    }
 }

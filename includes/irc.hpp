@@ -27,3 +27,8 @@ void    nick(Server &server, Client &client, std::vector<std::string> &cmd);
 void    pass(Server &server, Client &client, std::vector<std::string> &cmd);
 void    ping(Server &server, Client &client, std::vector<std::string> &cmd);
 void    user(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Kick
+std::string addKickMsgs(std::vector<std::string> &cmd);
+void    kickUser(Server &server, Client &client, std::string user, std::string channel, std::string msg);
+void    kick(Server &server, Client &client, std::vector<std::string> &cmd);
