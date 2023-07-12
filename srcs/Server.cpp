@@ -299,3 +299,28 @@ void    Server::createChannel(Client &client, std::string &channel, std::string 
     Channel ch(channel, key);
     ch.addOperator(client);
 }
+
+Channel&	Server::getChannelByName(std::string &name)
+{
+	for(int i = 0; i < this->getChannels().size(); i++)
+	{
+		if(this->getChannels()[i].getName() == name)
+			return this->getChannels()[i];
+	}
+}
+
+void Server::addReplyGroup(std::string msg, std::vector<Client> &clients)
+{
+	for(int i = 0; i < clients.size(); i++)
+	{
+		clients[i].addReply(msg);
+	}
+}
+
+void Server::sendReplyGroup(std::vector<Client> &clients)
+{
+	for(int i = 0; i < clients.size(); i++)
+	{
+		clients[i].sendReply();
+	}
+}
