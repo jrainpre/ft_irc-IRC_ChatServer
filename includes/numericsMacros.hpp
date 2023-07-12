@@ -25,5 +25,5 @@
 #define ERR_NEEDMOREPARAMS(client, command) (":localhost 461 " + client + " " + command + " :Not enough parameters\r\n")
 
 //PrivMsg
-#define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@hostname PRIVMSG" + recipient + " " + message + "\r\n")
+#define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@hostname PRIVMSG " + recipient + " " + message + "\r\n")
 #define ERR_NOSUCHNICK(client, nickname) (":localhost 401 " + client + " " + nickname + " :No such nick/channel" + "\r\n")
