@@ -61,10 +61,14 @@ public:
     void    joinChannel(Client &client, std::string &channel, std::string &key);
     void    createChannel(Client &client, std::string &channel, std::string &key);
 	bool	isNickInUse(std::string &nick);
+	Channel &getChannelByName(std::string &name);
 
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
     void    removeClientAndFd(int fd);
 	void unregisteredCmds();
 	void registeredCmds(Client &active_client);
+	void sendReplyGroup(std::vector<Client> &clients);
+	void addReplyGroup(std::string msg, std::vector<Client> &clients);
+	bool sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client);
 };

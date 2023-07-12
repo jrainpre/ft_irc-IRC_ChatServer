@@ -70,6 +70,7 @@ public:
 	
 	//Functions
 	void addReply(std::string msg) {this->replyCmd += msg;};
+	void addReplyGroup(std::vector<Client> &clients, std::string msg);
 	void addChannel(Channel channel); 
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
@@ -81,6 +82,7 @@ Client& operator=(const Client& other);
 
 
 	void sendReply();
+
 };
 
 

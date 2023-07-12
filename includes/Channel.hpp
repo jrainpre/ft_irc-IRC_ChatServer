@@ -25,7 +25,9 @@ public:
 	std::string getName(){return this->_name;}
 	std::string getTopic(){return this->_topic;}
 	std::string getKey(){return this->_key;}
-	std::vector<Client> getUsers();
+	std::vector<Client> &getUsers();
+	std::vector<Client> &getOperators();
+	std::vector<Client> &getInvited();
 
 	void addOperator(Client &client){_operators.push_back(client);}
 
