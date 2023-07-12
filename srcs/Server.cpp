@@ -296,5 +296,6 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
 
 void    Server::createChannel(Client &client, std::string &channel, std::string &key)
 {
-    Channel ch(channel);
+    Channel ch(channel, key);
+    ch.addOperator(client);
 }
