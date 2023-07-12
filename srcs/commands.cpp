@@ -111,7 +111,7 @@ std::map<std::string, CommandFunction> fillCmd()
 
 	cmd["INVITE"] = cmdInvite;
 	cmd["JOIN"] = join;
-	cmd["KICK"] = cmdKick;
+	cmd["KICK"] = kick;
 	cmd["KILL"] = cmdKill;
 	cmd["LIST"] = cmdList;
 	cmd["MODE"] = cmdMode;

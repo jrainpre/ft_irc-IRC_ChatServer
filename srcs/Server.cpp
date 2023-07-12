@@ -294,8 +294,9 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
 
 void    Server::createChannel(Client &client, std::string &channel, std::string &key)
 {
-    Channel ch(channel, key);
-    ch.addOperator(client);
+    Channel ch(channel, key, client);
+    ch.sendWelcome(client);
+    this->_channels.push_back(ch);
 }
 
 Channel&	Server::getChannelByName(std::string &name)
@@ -321,4 +322,30 @@ void Server::sendReplyGroup(std::vector<Client> &clients)
 	{
 		clients[i].sendReply();
 	}
+}
+
+bool Server::isOperator(std::string nick, std::string channel)
+{
+    if(this->channelExists(channel) == false)
+        return false;
+    Channel &ch = this->getChannelByName(channel);
+    for(int i = 0; i < ch.getOperators().size(); i++)
+    {
+        if(ch.getOperators()[i].getNick() == nick)
+            return true;
+    }
+    return false;
+}
+
+bool Server::isUserInChannel(std::string nick, std::string channel)
+{
+    if(this->channelExists(channel) == false)
+        return false;
+    Channel &ch = this->getChannelByName(channel);
+    for(int i = 0; i < ch.getUsers().size(); i++)
+    {
+        if(ch.getUsers()[i].getNick() == nick)
+            return true;
+    }
+    return false;
 }

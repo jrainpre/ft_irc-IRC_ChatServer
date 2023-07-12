@@ -63,6 +63,8 @@ public:
 	bool	isNickInUse(std::string &nick);
 	Channel &getChannelByName(std::string &name);
 
+    bool isOperator(std::string nick, std::string channel);
+
 
     class ExpextionNoMatchingClient : public std::exception {public: virtual const char* what() const throw() {return "Server Error";}};
     void    removeClientAndFd(int fd);
@@ -71,4 +73,5 @@ public:
 	void sendReplyGroup(std::vector<Client> &clients);
 	void addReplyGroup(std::string msg, std::vector<Client> &clients);
 	bool sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client);
+    bool isUserInChannel(std::string nick, std::string channel);
 };
