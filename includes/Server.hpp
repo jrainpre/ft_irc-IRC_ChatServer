@@ -72,6 +72,6 @@ public:
 	void registeredCmds(Client &active_client);
 	void sendReplyGroup(std::vector<Client> &clients, Client &sender);
 	void addReplyGroup(std::string msg, std::vector<Client> &clients, Client &sender);
-	bool sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client);
+	int sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client);
     bool isUserInChannel(std::string nick, std::string channel);
 };
