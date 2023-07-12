@@ -75,3 +75,18 @@ bool Channel::isClientInvited(Client &client)
     }
     return false;
 }
+
+std::vector<Client> &Channel::getUsers()
+{
+	return this->_users;
+}
+
+std::vector<Client> &Channel::getOperators()
+{
+	return this->_operators;
+}
+
+std::vector<Client> &Channel::getInvited()
+{
+	return this->_invited;
+}

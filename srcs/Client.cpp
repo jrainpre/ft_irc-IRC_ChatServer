@@ -61,6 +61,8 @@ void Client::sendReply()
 	}
 }
 
+
+
 Client& Client::operator=(const Client& other) {
 	_socket_fd = other._socket_fd;
 	_nick = other._nick;
