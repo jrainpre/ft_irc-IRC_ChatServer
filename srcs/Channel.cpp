@@ -4,9 +4,15 @@ Channel::Channel(std::string name) : _name(name), _key(""), _invite_only(false),
 {
 }
 
-Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _invite_only(false), _active_clients(0)
+Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
 {
 }
+
+Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
+{
+    this->_operators.push_back(client);
+}
+
 Channel::~Channel()
 {
     
@@ -19,7 +25,7 @@ void Channel::addUser(Client &client, std::string &key)
         client.addReply(ERR_BADCHANNELKEY(client.getNick(), this->_name));
         return;
     }
-    if(this->_clients_limit >= this->_active_clients)
+    if(this->_clients_limit <= this->_active_clients)
     {
         client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
         return;
@@ -31,6 +37,7 @@ void Channel::addUser(Client &client, std::string &key)
     }
     this->_users.push_back(client);
     this->_active_clients++;
+    this->sendWelcome(client);
 }
 
 void Channel::clientsInChannel(Client &client)
@@ -41,15 +48,22 @@ void Channel::clientsInChannel(Client &client)
     {
         client.addReply(this->_users[i].getNick() + " ");
     }
+
+    for(int i = 0; i < this->_operators.size(); i++)
+    {
+        client.addReply("@" + this->_operators[i].getNick() + " ");
+    }
+
     client.addReply("\r\n");
 }
 
 void Channel::sendWelcome(Client &client)
 {
-    client.addReply("JOIN " + this->_name);
+    client.addReply(":" + client.getNick() + "!localhost JOIN " + this->_name + "\r\n");
     if(this->_topic.empty() == false)
         client.addReply(RPL_TOPIC(client.getNick(), this->_name, this->_topic));
-    
+    this->clientsInChannel(client);
+    client.addReply(RPL_ENDOFNAMES(client.getNick(), this->_name));
 }
 
 bool Channel::isClientInvited(Client &client)

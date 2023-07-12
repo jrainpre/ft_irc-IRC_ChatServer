@@ -21,6 +21,7 @@ private:
 public:
 	Channel(std::string name);
 	Channel(std::string name, std::string key);
+	Channel(std::string name, std::string key, Client &client);
 	~Channel();
 	std::string getName(){return this->_name;}
 	std::string getTopic(){return this->_topic;}

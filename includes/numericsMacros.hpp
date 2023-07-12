@@ -12,7 +12,7 @@
 
 #define ERR_NONICKNAMEGIVEN(client) (":localhost 431 " + client + " :No nickname given\r\n")
 #define ERR_ERRONEUSNICKNAME(client ,newNick) (":localhost 432 " + client + " " + newNick + " :Erroneus nickname\r\n")
-#define ERR_NICKNAMEINUSE(client ,newNick) (":localhost 433 " + client + " " + newNick + " :Nickname is already in use\r\n")
+#define ERR_NICKNAMEINUSE(client, newNick) (":localhost 433 " + client + " " + newNick + " :Nickname is already in use\r\n")
 
 //Pass ErrorMsg
 
@@ -29,6 +29,8 @@
 
 #define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " " + channel + " :" + topic + "\r\n") 
 #define RPL_NAMREPLY(client, channel) (":localhost 353 " + client + " = " + channel + " :")
+#define RPL_ENDOFNAMES(client, channel) (":localhost 366 " + client + " " + channel + " :End of /NAMES list\r\n")
+
 //PrivMsg
 #define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@hostname PRIVMSG " + recipient + " " + message + "\r\n")
 #define ERR_NOSUCHNICK(client, nickname) (":localhost 401 " + client + " " + nickname + " :No such nick/channel" + "\r\n")

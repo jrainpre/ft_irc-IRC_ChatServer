@@ -28,7 +28,7 @@ std::string getSubstr(std::string &str, std::string del)
     std::string ret;
     if(str.empty())
         return ret;
-    if(pos_end = str.find(del, 0) != std::string::npos)
+    if(pos_end = str.find(del, 0) == std::string::npos)
     {
         ret = str;
         str.clear();

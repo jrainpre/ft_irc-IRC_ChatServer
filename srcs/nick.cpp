@@ -54,14 +54,14 @@ void    nick(Server &server, Client &client, std::vector<std::string> &cmd)
     }
     std::string nick = cmd[1];
     if(isValidNick(nick) == FAILED)
-    {
         client.addReply(ERR_ERRONEUSNICKNAME(client.getNick(), nick));
-        return;
-    }
-    if(isNickInUse(server, nick) == FAILED)
+    else if(isNickInUse(server, nick) == FAILED)
     {
-        client.addReply(ERR_NICKNAMEINUSE(client.getNick(), nick));
-        return;
+        if(client.getNick().empty() == true)
+            client.addReply(ERR_NICKNAMEINUSE((std::string)"*", nick));
+        else
+            client.addReply(ERR_NICKNAMEINUSE(client.getNick(), nick));
     }
-    client.setNick(nick);
+    else
+        client.setNick(nick);
 }
