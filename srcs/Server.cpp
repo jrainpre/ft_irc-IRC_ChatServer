@@ -288,14 +288,13 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
     for(int i = 0; i < this->getChannels().size(); i++)
     {
         if(this->getChannels()[i].getName() == channel)
-        {
             this->getChannels()[i].addUser(client, key);
-        }
     }
 }
 
 void    Server::createChannel(Client &client, std::string &channel, std::string &key)
 {
-    Channel ch(channel, key);
-    ch.addOperator(client);
+    Channel ch(channel, key, client);
+    ch.sendWelcome(client);
+    this->_channels.push_back(ch);
 }

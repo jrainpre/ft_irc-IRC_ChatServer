@@ -42,6 +42,14 @@ void Client::parseCmds(std::string &buf)
     {
         this->_cmds.push_back(split(firstSplit[i], " ", false));
     }
+
+	for(unsigned long i = 0; i < this->_cmds.size(); i++)
+	{
+		if(this->_cmds[i][this->_cmds[i].size() - 1] != "\r\n")
+			this->_cmds.erase(_cmds.begin() + i);
+		else
+			this->_cmds[i].erase(this->_cmds[i].end());
+	}
 }
 
 void Client::sendReply()
