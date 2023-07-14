@@ -105,3 +105,24 @@ bool Channel::isClientInChannel(Client &client)
 	}
 	return false;
 }
+
+void Channel::sendJoinMsgs(std::string clientNick)
+{
+    for(size_t i = 0; i < this->getOperators().size(); i++)
+    {
+        if(this->getOperators()[i].getNick() != clientNick)
+        {
+            this->getOperators()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getOperators()[i].sendReply();
+        }
+    }
+
+    for(size_t i = 0; i < this->getUsers().size(); i++)
+    {
+        if(this->getUsers()[i].getNick() != clientNick)
+        {
+            this->getUsers()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getUsers()[i].sendReply();
+        }
+    }
+}

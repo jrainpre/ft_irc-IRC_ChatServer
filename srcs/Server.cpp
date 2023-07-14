@@ -185,7 +185,7 @@ void    Server::removeClientAndFd(int fd)
 
     for(unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if(fd == this->_clients[i].getSocketFd());
+        if(fd == this->_clients[i].getSocketFd())
             this->_clients.erase(_clients.begin() + i);
     }
 }
@@ -287,7 +287,11 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
     for(int i = 0; i < this->getChannels().size(); i++)
     {
         if(this->getChannels()[i].getName() == channel)
+        {
             this->getChannels()[i].addUser(client, key);
+            this->getChannels()[i].sendJoinMsgs(client.getNick());
+            return;
+        }
     }
 }
 

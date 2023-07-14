@@ -42,6 +42,6 @@ public:
 	bool isClientInChannel(Client &client);
 	void sendWelcome(Client &client);
 	void clientsInChannel(Client &client);
-
+	void sendJoinMsgs(std::string clientNick);
 
 };
