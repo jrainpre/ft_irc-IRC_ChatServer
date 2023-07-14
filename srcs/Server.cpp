@@ -261,8 +261,7 @@ bool    Server::isUnregisteredCheck(Client &client, std::string cmd)
 }
 
 void Server::execCmd(Client &client)
-{
-	std::map<std::string, CommandFunction> cmdMap = fillCmd();
+{	std::map<std::string, CommandFunction> cmdMap = fillCmd();
     std::string cmd = client.getCmds()[0][0];
 
     if(isUnregisteredCheck(client, cmd) == false)

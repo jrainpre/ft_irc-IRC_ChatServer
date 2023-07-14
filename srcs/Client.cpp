@@ -34,22 +34,18 @@ void Client::removeChannel(std::string channel)
 
 void Client::parseCmds(std::string &buf)
 {
-    std::vector<std::string> firstSplit, secondSplit;
-    if(buf.find("\r\n") == std::string::npos)
-        return;
-    firstSplit = split(buf, "\r\n", true);
-    for(unsigned long i = 0; i < firstSplit.size(); i++)
+    std::vector<std::string> lines;
+    std::size_t pos;
+    
+    while ((pos = buf.find("\r\n")) != std::string::npos)
+        buf.replace(pos, 2, "\n");
+    lines = split(buf, "\n", true);
+    for (std::string &line : lines)
     {
-        this->_cmds.push_back(split(firstSplit[i], " ", false));
+        std::vector<std::string> split_line = split(line, " ", false);
+        if (!split_line.empty())
+            this->_cmds.push_back(split_line);
     }
-
-	for(unsigned long i = 0; i < this->_cmds.size(); i++)
-	{
-		if(this->_cmds[i][this->_cmds[i].size() - 1] != "\r\n")
-			this->_cmds.erase(_cmds.begin() + i);
-		else
-			this->_cmds[i].erase(this->_cmds[i].end());
-	}
 }
 
 void Client::sendReply()

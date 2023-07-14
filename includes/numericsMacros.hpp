@@ -46,3 +46,7 @@
 #define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
 //"<client> :No text to send"
 #define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
+//"<client> :No recipient given (<command>)"
+#define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
+//"<client> :No text to send"
+#define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
