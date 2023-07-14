@@ -90,3 +90,18 @@ std::vector<Client> &Channel::getInvited()
 {
 	return this->_invited;
 }
+
+bool Channel::isClientInChannel(Client &client)
+{
+	for(int i = 0; i < this->_users.size(); i++)
+	{
+		if(this->_users[i].getNick() == client.getNick())
+			return true;
+	}
+	for(int i = 0; i < this->_operators.size(); i++)
+	{
+		if(this->_operators[i].getNick() == client.getNick())
+		return true;
+	}
+	return false;
+}

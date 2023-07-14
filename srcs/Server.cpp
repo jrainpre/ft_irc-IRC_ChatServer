@@ -261,8 +261,7 @@ bool    Server::isUnregisteredCheck(Client &client, std::string cmd)
 }
 
 void Server::execCmd(Client &client)
-{
-	std::map<std::string, CommandFunction> cmdMap = fillCmd();
+{	std::map<std::string, CommandFunction> cmdMap = fillCmd();
     std::string cmd = client.getCmds()[0][0];
 
     if(isUnregisteredCheck(client, cmd) == false)
@@ -308,18 +307,20 @@ Channel&	Server::getChannelByName(std::string &name)
 	}
 }
 
-void Server::addReplyGroup(std::string msg, std::vector<Client> &clients)
+void Server::addReplyGroup(std::string msg, std::vector<Client> &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
-		clients[i].addReply(msg);
+		if(clients[i].getNick() != sender.getNick())
+			clients[i].addReply(msg);
 	}
 }
 
-void Server::sendReplyGroup(std::vector<Client> &clients)
+void Server::sendReplyGroup(std::vector<Client> &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
+		if(clients[i].getNick() != sender.getNick())
 		clients[i].sendReply();
 	}
 }
