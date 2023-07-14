@@ -39,6 +39,7 @@ public:
 	bool check_channel_name(std::string name);
 
 	bool isClientInvited(Client &client);
+	bool isClientInChannel(Client &client);
 	void sendWelcome(Client &client);
 	void clientsInChannel(Client &client);
 

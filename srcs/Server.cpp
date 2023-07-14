@@ -308,18 +308,20 @@ Channel&	Server::getChannelByName(std::string &name)
 	}
 }
 
-void Server::addReplyGroup(std::string msg, std::vector<Client> &clients)
+void Server::addReplyGroup(std::string msg, std::vector<Client> &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
-		clients[i].addReply(msg);
+		if(clients[i].getNick() != sender.getNick())
+			clients[i].addReply(msg);
 	}
 }
 
-void Server::sendReplyGroup(std::vector<Client> &clients)
+void Server::sendReplyGroup(std::vector<Client> &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
+		if(clients[i].getNick() != sender.getNick())
 		clients[i].sendReply();
 	}
 }

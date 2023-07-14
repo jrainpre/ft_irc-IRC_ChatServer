@@ -15,7 +15,6 @@ std::string getWholeCmd(std::vector<std::string> &cmd)
 	return wholeCmd;
 }
 
-//This mode is standard. The prefix and mode letter used for it, respectively, are "@" and "+o".
 std::string getChannelName(std::string channel)
 {
 	if (channel[0] == '@')
@@ -29,24 +28,26 @@ bool isChannelOperatorMessage(std::string channel)
 	return false;
 }
 
-bool Server::sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client)
+int Server::sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client)
 {
-	if (isChannelOperatorMessage(channel_name))
-	{
+
+	bool op_message = isChannelOperatorMessage(channel_name);
+	if (op_message)
 		channel_name = getChannelName(channel_name);
-		if 	(!server.channelExists(channel_name))
-			return false;
-		Channel &channel = server.getChannelByName(channel_name);
-		server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getOperators());
-		server.sendReplyGroup(channel.getOperators());
-	}
-	else
+	if 	(!server.channelExists(channel_name))
+		return 0;
+	Channel &channel = server.getChannelByName(channel_name);
+	if (channel.isClientInChannel(client))
 	{
-		if (!server.channelExists(channel_name))
-			return false;
-		Channel &channel = server.getChannelByName(channel_name);
-		server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getUsers());
-		server.sendReplyGroup(channel.getUsers());
+		client.addReply(ERR_CANNOTSENDTOCHAN(client.getNick(), channel.getName()));
+		return true;
+	}
+	server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getOperators(), client);
+	server.sendReplyGroup(channel.getOperators(), client);
+	if (op_message)
+	{
+		server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getUsers(), client);
+		server.sendReplyGroup(channel.getUsers(), client);
 	}
 	return true;
 }
@@ -58,8 +59,7 @@ void cmdPrivmsg(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 		std::string message = getWholeCmd(cmd);
 		std::string recipient_nick = cmd[1];
-		message = message.substr(message.find_first_of(':') + 1);
-		message.erase(message.find_last_not_of("\r\n"));	
+		message = message.substr(message.find_first_of(':') + 1);	
 
 	if (server.sendPrivmsgChannel(recipient_nick, message, server, client))
 		return;
