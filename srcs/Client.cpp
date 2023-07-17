@@ -39,7 +39,7 @@ void Client::parseCmds(std::string &buf)
     
     while ((pos = buf.find("\r\n")) != std::string::npos)
         buf.replace(pos, 2, "\n");
-    lines = split(buf, "\n", true);
+    lines = split(buf, "\n", false); //changed to false, delete backslash n
     for (std::string &line : lines)
     {
         std::vector<std::string> split_line = split(line, " ", false);

@@ -38,7 +38,7 @@ bool Server::sendPrivmsgChannel(std::string channel_name, std::string message, S
 	if (!server.channelExists(channel_name))
 		return 0;
 	Channel &channel = server.getChannelByName(channel_name);
-	if (!channel.isClientInChannel(client))
+	if (!channel.isClientInChannel(client.getNick()))
 	{
 		client.addReply(ERR_CANNOTSENDTOCHAN(client.getNick(), channel.getName()));
 		return true;

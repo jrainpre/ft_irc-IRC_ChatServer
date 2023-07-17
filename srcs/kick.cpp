@@ -1,16 +1,5 @@
 #include "../includes/irc.hpp"
 
-std::string addKickMsgs(std::vector<std::string> &cmd)
-{
-    std::string ret;
-    for(int i = 3; i < cmd.size(); i++)
-    {
-        ret += cmd[i] + " ";
-    }
-    if(ret[0] == ':')
-        ret.erase(ret.begin());
-    return ret;
-}
 
 void    kickUser(Server &server, Client &client, std::string user, std::string channel, std::string msg)
 {
@@ -39,7 +28,7 @@ void    kick(Server &server, Client &client, std::vector<std::string> &cmd)
         {
             user = getSubstr(cmd[2], ",");
             if(cmd.size() > 3)
-                msg = addKickMsgs(cmd);
+                msg = addMsgs(3, cmd);
             kickUser(server, client, user, channel, msg);
         }
     }

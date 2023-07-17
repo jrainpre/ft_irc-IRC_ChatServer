@@ -50,3 +50,14 @@
 #define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
 //"<client> :No text to send"
 #define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
+
+//Invite
+#define ERR_NOSUCHCHANNEL(client, channel) (":localhost 403 " + client + " " + channel + " :No such channel\r\n")
+#define ERR_USERONCHANNEL(client, nick, channel) (":localhost 443 " + client +  " " + nick + " " + channel + " :is already on channel\r\n")
+#define ERR_NOTONCHANNEL(client, channel) (":localhost 442 " + client + " " +  channel + " :You're not on that channel\r\n")
+#define ERR_CHANOPRIVSNEEDED(client, channel) (":localhost 482 " + client + " " + channel + " :You're not channel operator\r\n")
+
+#define RPL_INVITING(client, nick, channel) (":localhost 341 " + client + " " + nick + " " + channel + "\r\n") 
+
+//Topic
+#define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " " + channel + " :No topic is set\r\n")

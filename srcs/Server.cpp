@@ -289,7 +289,14 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
         if(this->getChannels()[i].getName() == channel)
         {
             this->getChannels()[i].addUser(client, key);
-            this->getChannels()[i].sendJoinMsgs(client.getNick());
+            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
+                "\r\n", this->getChannels()[i].getUsers(), client);
+            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
+                "\r\n", this->getChannels()[i].getOperators(), client);
+            this->sendReplyGroup(this->getChannels()[i].getUsers(), client);
+            this->sendReplyGroup(this->getChannels()[i].getOperators(), client);
+            if(this->getChannels()[i].getTopic().empty() == false)
+                client.addReply(RPL_TOPIC(client.getNick(), channel, this->getChannels()[i].getTopic()));
             return;
         }
     }
@@ -350,6 +357,11 @@ bool Server::isUserInChannel(std::string nick, std::string channel)
     for(int i = 0; i < ch.getUsers().size(); i++)
     {
         if(ch.getUsers()[i].getNick() == nick)
+            return true;
+    }
+    for(int i = 0; i < ch.getOperators().size(); i++)
+    {
+        if(ch.getOperators()[i].getNick() == nick)
             return true;
     }
     return false;

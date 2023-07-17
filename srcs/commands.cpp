@@ -47,7 +47,7 @@ void cmdNames(Server& server, Client& client, std::vector<std::string>  &cmd)
 void cmdNick(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdNick" << std::endl;
-	std::vector<std::vector<std::string>> cmds = client.getCmds();
+	std::vector<std::vector<std::string> > cmds = client.getCmds();
 	if (cmds[0].size() > 1)
 		client.setNick(cmds[0][1]);
 }
@@ -95,7 +95,7 @@ void cmdTopic(Server& server, Client& client, std::vector<std::string>  &cmd)
 void cmdUser(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
 	std::cout << "cmdUser" << std::endl;
-	std::vector<std::vector<std::string>> cmds = client.getCmds();
+	std::vector<std::vector<std::string> > cmds = client.getCmds();
 	if (cmds[0].size() > 1)
 	{
 		client.setUsername(cmds[0][1]);
@@ -109,7 +109,7 @@ std::map<std::string, CommandFunction> fillCmd()
 {
     std::map<std::string, CommandFunction> cmd;
 
-	cmd["INVITE"] = cmdInvite;
+	cmd["INVITE"] = invite;
 	cmd["JOIN"] = join;
 	cmd["KICK"] = kick;
 	cmd["KILL"] = cmdKill;
@@ -125,7 +125,7 @@ std::map<std::string, CommandFunction> fillCmd()
 	cmd["PING"] = ping;
 	cmd["PRIVMSG"] = cmdPrivmsg;
 	cmd["QUIT"] = cmdQuit;
-	cmd["TOPIC"] = cmdTopic;
+	cmd["TOPIC"] = topic;
 	cmd["USER"] = user;
     return cmd;
 }
