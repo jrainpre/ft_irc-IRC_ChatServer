@@ -32,3 +32,9 @@ void    user(Server &server, Client &client, std::vector<std::string> &cmd);
 std::string addKickMsgs(std::vector<std::string> &cmd);
 void    kickUser(Server &server, Client &client, std::string user, std::string channel, std::string msg);
 void    kick(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Invite
+void    invite(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Topic
+void    topic(Server &server, Client &client, std::vector<std::string> &cmd);

@@ -29,19 +29,21 @@ public:
 	std::vector<Client> &getUsers();
 	std::vector<Client> &getOperators();
 	std::vector<Client> &getInvited();
+	bool getInviteOnly(){return this->_invite_only;}
 
 	void addOperator(Client &client){_operators.push_back(client);}
 
 	void setName(std::string name){this->_name = name;}
-	void setTopic(std::string topic){this->_topic = topic;}
+	void setInviteOnly(bool inv){this->_invite_only = inv;}
+	void setTopic(std::string topic);
 	void addUser(Client &user, std::string &key);
 	void removeUser(Client user);
 	bool check_channel_name(std::string name);
 
-	bool isClientInvited(Client &client);
-	bool isClientInChannel(Client &client);
+	bool isClientInvited(std::string &nick);
+	bool isClientInChannel(std::string nick);
 	void sendWelcome(Client &client);
 	void clientsInChannel(Client &client);
 	void sendJoinMsgs(std::string clientNick);
-
+	void inviteUser(Client &client, std::string nick);
 };

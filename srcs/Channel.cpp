@@ -30,11 +30,11 @@ void Channel::addUser(Client &client, std::string &key)
         client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
         return;
     }
-    if(this->_invite_only == true && this->isClientInvited(client) == false)
-    {
-        client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
-        return;
-    }
+    // if(this->_invite_only == true && this->isClientInvited(client) == false)
+    // {
+    //     client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
+    //     return;
+    // }
     this->_users.push_back(client);
     this->_active_clients++;
     this->sendWelcome(client);
@@ -66,11 +66,11 @@ void Channel::sendWelcome(Client &client)
     client.addReply(RPL_ENDOFNAMES(client.getNick(), this->_name));
 }
 
-bool Channel::isClientInvited(Client &client)
+bool Channel::isClientInvited(std::string &nick)
 {
     for(int i = 0; i < this->_invited.size(); i++)
     {
-        if(this->_invited[i].getNick() == client.getNick())
+        if(this->_invited[i].getNick() == nick)
             return true;
     }
     return false;
@@ -91,16 +91,16 @@ std::vector<Client> &Channel::getInvited()
 	return this->_invited;
 }
 
-bool Channel::isClientInChannel(Client &client)
+bool Channel::isClientInChannel(std::string nick)
 {
 	for(int i = 0; i < this->_users.size(); i++)
 	{
-		if(this->_users[i].getNick() == client.getNick())
+		if(this->_users[i].getNick() == nick)
 			return true;
 	}
 	for(int i = 0; i < this->_operators.size(); i++)
 	{
-		if(this->_operators[i].getNick() == client.getNick())
+		if(this->_operators[i].getNick() == nick)
 		return true;
 	}
 	return false;
@@ -125,4 +125,16 @@ void Channel::sendJoinMsgs(std::string clientNick)
             this->getUsers()[i].sendReply();
         }
     }
+}
+
+void Channel::inviteUser(Client &client, std::string nick)
+{
+    if(this->isClientInvited(nick) == false)
+        this->getInvited().push_back(client);
+    client.addReply(RPL_INVITING(client.getNick(), nick, this->getName()));
+}
+
+void Channel::setTopic(std::string topic)
+{
+    this->_topic = topic;
 }

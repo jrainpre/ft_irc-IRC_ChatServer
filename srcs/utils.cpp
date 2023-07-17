@@ -28,7 +28,7 @@ std::string getSubstr(std::string &str, std::string del)
     std::string ret;
     if(str.empty())
         return ret;
-    if(pos_end = str.find(del, 0) == std::string::npos)
+    if(pos_end == str.find(del, 0) == std::string::npos)
     {
         ret = str;
         str.clear();
@@ -64,5 +64,19 @@ std::vector<std::string> split(std::string &s, std::string delimit, bool keepLim
         ret.push_back(s);
         s.clear();
     }
+    return ret;
+}
+
+std::string addMsgs(int itStart, std::vector<std::string> &cmd)
+{
+    std::string ret;
+    for(int i = itStart; i < cmd.size(); i++)
+    {
+        ret += cmd[i];
+        if(i + 1 < cmd.size())
+            ret += " ";
+    }
+    if(ret[0] == ':')
+        ret.erase(ret.begin());
     return ret;
 }
