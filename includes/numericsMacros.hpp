@@ -38,7 +38,7 @@
 #define ERR_USERNOTINCHANNEL(client, nick, channel) (":localhost 441 " + client + " " + nick + " " + channel + " :They aren't on that channel\r\n")
 
 //PrivMsg
-#define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@hostname PRIVMSG " + recipient + " " + message + "\r\n")
+#define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@localhost PRIVMSG " + recipient + " " + message + "\r\n")
 #define ERR_NOSUCHNICK(client, nickname) (":localhost 401 " + client + " " + nickname + " :No such nick/channel" + "\r\n")
 //"<client> <channel> :Cannot send to channel"
 #define ERR_CANNOTSENDTOCHAN(client, channel) (":localhost 404 " + client + " " + channel + " :Cannot send to channel" + "\r\n")
@@ -50,6 +50,9 @@
 #define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
 //"<client> :No text to send"
 #define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
+
+//Notice
+#define SENDNOTICE(nickname, username, recipient, message)(":" + nickname + "!" + username + "@hostname NOTICE " + recipient + " " + message + "\r\n")
 
 //Invite
 #define ERR_NOSUCHCHANNEL(client, channel) (":localhost 403 " + client + " " + channel + " :No such channel\r\n")
