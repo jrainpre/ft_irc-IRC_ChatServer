@@ -52,10 +52,10 @@ void cmdNick(Server& server, Client& client, std::vector<std::string>  &cmd)
 		client.setNick(cmds[0][1]);
 }
 
-void cmdNotice(Server& server, Client& client, std::vector<std::string>  &cmd)
-{
-	std::cout << "cmdNotice" << std::endl;
-}
+// void cmdNotice(Server& server, Client& client, std::vector<std::string>  &cmd)
+// {
+// 	std::cout << "cmdNotice" << std::endl;
+// }
 
 void cmdOper(Server& server, Client& client, std::vector<std::string>  &cmd)
 {

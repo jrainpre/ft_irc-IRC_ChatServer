@@ -38,3 +38,8 @@ void    invite(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //Topic
 void    topic(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//PRIVMSG
+bool isChannelOperatorMessage(std::string channel);
+std::string getChannelName(std::string channel);
+std::string getWholeCmd(std::vector<std::string> &cmd);
