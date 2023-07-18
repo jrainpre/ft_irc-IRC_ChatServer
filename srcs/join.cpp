@@ -32,10 +32,6 @@ void    join(Server &server, Client &client, std::vector<std::string> &cmd)
             channel = getSubstr(cmd[1], ",");
             if(cmd.size() > 2)
                 key = getSubstr(cmd[2], ",");
-            if(channel.size() > 32)
-            {
-                
-            }
             checkChannel(server, client, channel, key);
         }
     }

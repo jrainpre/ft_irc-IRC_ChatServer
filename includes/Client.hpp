@@ -40,6 +40,7 @@ private:
 	std::string cmdBuf;
 	Server &_server;
 	std::string replyCmd;
+	std::string buf;
 
 public:
 	Client(int socket_fd, Server &server);

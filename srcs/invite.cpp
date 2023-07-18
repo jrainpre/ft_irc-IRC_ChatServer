@@ -28,7 +28,7 @@ void    invite(Server &server, Client &client, std::vector<std::string> &cmd)
      else
      {
         Client &target = server.getClientByNick(nick);
-        ch.inviteUser(client, nick);
+        ch.inviteUser(client, target);
         target.addReply(":" + client.getNick() + "!localhost INVITE " + nick + " " + channel + "\r\n");
         target.sendReply();
      }

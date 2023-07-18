@@ -114,7 +114,7 @@ std::map<std::string, CommandFunction> fillCmd()
 	cmd["KICK"] = kick;
 	cmd["KILL"] = cmdKill;
 	cmd["LIST"] = cmdList;
-	cmd["MODE"] = cmdMode;
+	cmd["MODE"] = mode;
 	cmd["MOTD"] = cmdMotd;
 	cmd["NAMES"] = cmdNames;
 	cmd["NICK"] = nick;
