@@ -32,17 +32,15 @@ void Client::removeChannel(std::string channel)
 // }
 
 
-void Client::parseCmds(std::string &buf)
+void Client::parseCmds()
 {
     std::vector<std::string> lines;
     std::size_t pos;
     
-    while ((pos = buf.find("\r\n")) != std::string::npos)
-        buf.replace(pos, 2, "\n");
-    lines = split(buf, "\n", false); //changed to false, delete backslash n
-    for (std::string &line : lines)
+    lines = split(cmdBuf, "\n", false); // changed to false, delete backslash n
+    for (size_t i = 0; i < lines.size(); ++i)
     {
-        std::vector<std::string> split_line = split(line, " ", false);
+        std::vector<std::string> split_line = split(lines[i], " ", false);
         if (!split_line.empty())
             this->_cmds.push_back(split_line);
     }
@@ -53,6 +51,7 @@ void Client::sendReply()
 	if(this->replyCmd.empty() == false)
 	{
     	send(this->_socket_fd, this->replyCmd.c_str(), this->replyCmd.size(), MSG_NOSIGNAL);
+		std::cout << "Reply sent: " << this->replyCmd << std::endl;
     	this->replyCmd.clear();
 	}
 }
@@ -74,5 +73,15 @@ Client& Client::operator=(const Client& other) {
 	_server = other._server;
 	
 	return *this;
+}
+
+bool Client::cmdIsTerminated()
+{
+    std::size_t pos;
+	while ((pos = this->cmdBuf.find("\r\n")) != std::string::npos)
+        this->cmdBuf.replace(pos, 2, "\n");
+	if (this->cmdBuf.find("\n") != std::string::npos)
+		return true;
+	return false;
 }
 

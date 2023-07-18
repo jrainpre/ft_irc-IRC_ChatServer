@@ -18,6 +18,8 @@
 #define MAX_CLIENTS 100
 #define BUFF_LEN 1024
 
+extern bool g_terminate;
+
 class Client;
 class Channel;
 
@@ -49,6 +51,7 @@ public:
     bool    serverLoop();
     bool    addClient();
     void    handleMessage(int socket_fd);
+	void    handleWrite(int socket_fd);
     Client& getClientByFd(int socket_fd);
     void    cmdLoop(Client &client);
 	Client& getClientByNick(std::string nick);
@@ -70,8 +73,8 @@ public:
     void    removeClientAndFd(int fd);
 	void unregisteredCmds();
 	void registeredCmds(Client &active_client);
-	void sendReplyGroup(std::vector<Client> &clients, Client &sender);
-	void addReplyGroup(std::string msg, std::vector<Client> &clients, Client &sender);
+	void sendReplyGroup(std::vector<Client > &clients, Client &sender);
+	void addReplyGroup(std::string msg, std::vector<Client > &clients, Client &sender);
 	bool sendPrivmsgChannel(std::string channel_name, std::string message, Server &server, Client &client);
     bool isUserInChannel(std::string nick, std::string channel);
 	bool sendNoticeChannel(std::string channel_name, std::string message, Server &server, Client &client);

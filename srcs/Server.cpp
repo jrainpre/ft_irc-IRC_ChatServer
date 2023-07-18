@@ -1,6 +1,6 @@
 #include "../includes/Server.hpp"
 
-extern bool g_terminate;
+// extern bool g_terminate;
 //Constructers
 
 Server::Server(unsigned int port, std::string password) : _port(port), _password(password), _server_fd(0)
@@ -96,19 +96,20 @@ bool    Server::addClient()
         return FAILED;
     }
 
-    pollClient.events = POLLIN;
+    pollClient.events = POLLIN | POLLOUT;
     this->_sockets.push_back(pollClient);
     const char *hi = "NOTICE :Welcome to the IRC server!\r\n";
     write(pollClient.fd, hi, strlen(hi));
     Client newClient(pollClient.fd, *this);
     this->_clients.push_back(newClient);
+	return WORKED;
 }
+
 
 void    Server::handleMessage(int socket_fd)
 {
     int     len;
     char    buffer[BUFF_LEN];
-    std::string buf;
 	try
 	{
 		Client &active_client = getClientByFd(socket_fd);
@@ -127,11 +128,13 @@ void    Server::handleMessage(int socket_fd)
 		}
 		buffer[len] = 0;
 		std::cout << buffer << std::endl;
-		buf = buffer;
-
+		active_client.setCmdBuf(active_client.getCmdBuf() + buffer);
+		if (!active_client.cmdIsTerminated())
+			return;
 		//Below Parses commands into std::vector<std::vector<std::string> >
 
-		active_client.parseCmds(buf);
+		active_client.parseCmds();
+		active_client.setCmdBuf("");
 		this->cmdLoop(active_client);
 	}
 	catch(const std::exception& e)
@@ -144,14 +147,14 @@ bool    Server::serverLoop()
 {
     pollfd serverPoll;
     serverPoll.fd = this->_server_fd;
-    serverPoll.events = POLLIN;
+    serverPoll.events = POLLIN | POLLOUT;
     this->_sockets.push_back(serverPoll);
 
     std::cout << "Waiting for connections..." << std::endl;
 
-    while(!g_terminate)
+    while(g_terminate == false)
     {
-        if(poll(this->_sockets.data(), this->_sockets.size(), -42) < 0)
+        if(poll(this->_sockets.data(), this->_sockets.size(), -42) < 0 && !g_terminate)
         {
             std::cout << "Poll() failed" << std::endl;
             //Function which closes all FD in vector
@@ -169,10 +172,22 @@ bool    Server::serverLoop()
                 else
                 {
                     handleMessage(this->_sockets[i].fd);
+					break;
                 }
-            }
-        }
+    	    }
+			else if(this->_sockets[i].revents & POLLOUT)
+			{
+				handleWrite(this->_sockets[i].fd);
+			}
+		}
     }
+	return WORKED;
+}
+
+void Server::handleWrite(int socket_fd)
+{
+	Client &active_client = getClientByFd(socket_fd);
+	active_client.sendReply();
 }
 
 void    Server::removeClientAndFd(int fd)
@@ -227,7 +242,7 @@ void    Server::cmdLoop(Client &client)
         execCmd(client);
         client.getCmds().erase(client.getCmds().begin());
     }
-    client.sendReply();
+    // client.sendReply();
     this->sendWelcome(client);
 }
 
@@ -243,7 +258,7 @@ void    Server::sendWelcome(Client &client)
         client.addReply(RPL_CREATED((std::string) "2023.09.10", client.getNick()));
         client.addReply(RPL_MYINFO((std::string) "localhost", (std::string) "1.0", (std::string) "o", (std::string) "itkol", client.getNick()));
         client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 CHANNELLEN=32 NICKLEN=30", client.getNick()));
-        client.sendReply();
+        // client.sendReply();
     }
 }
 
@@ -318,7 +333,7 @@ Channel&	Server::getChannelByName(std::string &name)
 	}
 }
 
-void Server::addReplyGroup(std::string msg, std::vector<Client> &clients, Client &sender)
+void Server::addReplyGroup(std::string msg, std::vector<Client > &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
@@ -327,7 +342,7 @@ void Server::addReplyGroup(std::string msg, std::vector<Client> &clients, Client
 	}
 }
 
-void Server::sendReplyGroup(std::vector<Client> &clients, Client &sender)
+void Server::sendReplyGroup(std::vector<Client > &clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{

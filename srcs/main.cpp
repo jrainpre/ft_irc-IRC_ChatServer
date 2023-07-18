@@ -18,6 +18,7 @@ bool g_terminate = false;
 
 void signalhandler(int)
 {
+	(void)signal;
     g_terminate = true;
     std::cout << "Terminating server..." << std::endl;
 }
