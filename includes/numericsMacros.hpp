@@ -64,3 +64,6 @@
 
 //Topic
 #define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " " + channel + " :No topic is set\r\n")
+
+//Mode
+#define RPL_CHANNELMODEIS(client, channel, modestring, arguments) (":localhost 324 " + client + " " + channel + " " + modestring + " " + arguments + "\r\n")

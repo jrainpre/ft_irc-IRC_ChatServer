@@ -24,6 +24,11 @@ void    setTopic(Server &server, Client &client, std::string channel, std::vecto
 {
     std::string newTopic = addMsgs(2, cmd);
     Channel &ch = server.getChannelByName(channel);
+    if(ch.getTopicRestricted() == true && server.isOperator(client.getNick(), channel) == false)
+    {
+        client.addReply(ERR_CHANOPRIVSNEEDED(client.getNick(), channel));
+        return;
+    }
     ch.setTopic(newTopic);
     server.addReplyGroup(":" + client.getNick() + "!localhost TOPIC " + channel + " " + newTopic + "\r\n", ch.getUsers(), client);
     server.addReplyGroup(":" + client.getNick() + "!localhost TOPIC " + channel + " " + newTopic + "\r\n", ch.getOperators(), client);

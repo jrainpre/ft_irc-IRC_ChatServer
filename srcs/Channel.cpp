@@ -1,16 +1,20 @@
 #include "../includes/Channel.hpp"
 
-Channel::Channel(std::string name) : _name(name), _key(""), _invite_only(false), _active_clients(0)
-{
-}
+// Channel::Channel(std::string name) : _name(name), _key(""), _invite_only(false), _active_clients(0)
+// {
+// }
 
-Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
-{
-}
+// Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
+// {
+// }
 
-Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
+Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _has_userlimit(false), _topic_restricted(false), _clients_limit(-1)
 {
     this->_operators.push_back(client);
+    if(!key.empty())
+        this->_has_key = true;
+    else
+        this->_has_key = false;
 }
 
 Channel::~Channel()
@@ -18,26 +22,21 @@ Channel::~Channel()
     
 }
 
-void Channel::addUser(Client &client, std::string &key)
+bool Channel::addUser(Client &client, std::string &key)
 {
-    if(this->_key.empty() == false && this->_key != key)
-    {
+    if(this->_has_key == true && this->_key.empty() == false && this->_key != key)
         client.addReply(ERR_BADCHANNELKEY(client.getNick(), this->_name));
-        return;
-    }
-    if(this->_clients_limit <= this->_active_clients)
-    {
+    else if(this->_has_userlimit == true && this->_clients_limit <= this->getUsers().size() + this->getOperators().size())
         client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
-        return;
+    else if(this->_invite_only == true && this->isClientInvited(client.getNick()) == false)
+        client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
+    else
+    {
+        this->_users.push_back(client);
+        this->sendWelcome(client);
+        return true;
     }
-    // if(this->_invite_only == true && this->isClientInvited(client) == false)
-    // {
-    //     client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
-    //     return;
-    // }
-    this->_users.push_back(client);
-    this->_active_clients++;
-    this->sendWelcome(client);
+    return false;
 }
 
 void Channel::clientsInChannel(Client &client)
@@ -66,7 +65,7 @@ void Channel::sendWelcome(Client &client)
     client.addReply(RPL_ENDOFNAMES(client.getNick(), this->_name));
 }
 
-bool Channel::isClientInvited(std::string &nick)
+bool Channel::isClientInvited(std::string nick)
 {
     for(int i = 0; i < this->_invited.size(); i++)
     {
@@ -127,14 +126,54 @@ void Channel::sendJoinMsgs(std::string clientNick)
     }
 }
 
-void Channel::inviteUser(Client &client, std::string nick)
+void Channel::inviteUser(Client &client, Client &target)
 {
-    if(this->isClientInvited(nick) == false)
-        this->getInvited().push_back(client);
-    client.addReply(RPL_INVITING(client.getNick(), nick, this->getName()));
+    if(this->isClientInvited(target.getNick()) == false)
+        this->getInvited().push_back(target);
+    client.addReply(RPL_INVITING(client.getNick(), target.getNick(), this->getName()));
 }
 
 void Channel::setTopic(std::string topic)
 {
     this->_topic = topic;
+}
+
+std::string Channel::getAllModes()
+{
+    std::string modes = "+";
+    if(this->_invite_only)
+        modes += "i";
+    if(this->_has_key)
+        modes += "k";
+    if(this->_topic_restricted)
+        modes += "t";
+    if(this->_has_userlimit)
+        modes += "l " + this->_clients_limit;
+    return modes;
+}
+
+void Channel::promoteUser(std::string &nick)
+{
+    for(size_t i = 0; i < _users.size(); i++)
+    {
+        if(_users[i].getNick() == nick)
+        {
+            this->addOperator(_users[i]);
+            _users.erase(_users.begin() + i);
+            return;
+        }
+    }
+}
+
+void Channel::demoteUser(std::string &nick)
+{
+    for(size_t i = 0; i < _operators.size(); i++)
+    {
+        if(_operators[i].getNick() == nick)
+        {
+            _users.push_back(_operators[i]);
+            _operators.erase(_operators.begin() + i);
+            return;
+        }
+    }
 }

@@ -127,11 +127,10 @@ void    Server::handleMessage(int socket_fd)
 		}
 		buffer[len] = 0;
 		std::cout << buffer << std::endl;
-		buf = buffer;
 
+        buf = buffer;
 		//Below Parses commands into std::vector<std::vector<std::string> >
-
-		active_client.parseCmds(buf);
+        active_client.parseCmds(buf);
 		this->cmdLoop(active_client);
 	}
 	catch(const std::exception& e)
@@ -288,7 +287,8 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
     {
         if(this->getChannels()[i].getName() == channel)
         {
-            this->getChannels()[i].addUser(client, key);
+            if(this->getChannels()[i].addUser(client, key) == false)
+                return;
             this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
                 "\r\n", this->getChannels()[i].getUsers(), client);
             this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
