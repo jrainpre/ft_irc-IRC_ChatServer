@@ -30,7 +30,7 @@ bool    isNickInUse(Server &server, std::string &nick)
 {
     for(int i = 0; i < server.getClients().size(); i++)
     {
-        if(server.getClients()[i].getNick() == nick)
+        if(server.getClients()[i]->getNick() == nick)
             return FAILED;
     }
     return WORKED;
@@ -42,6 +42,7 @@ bool    isValidNick(std::string &nick)
         return FAILED;
     if(nick.size() > 30)
         return FAILED;
+	return WORKED;
 }
 
 //have to check the "Client" in error msg when no nick name is given

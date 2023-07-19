@@ -19,11 +19,6 @@
 class Channel;
 class Server;
 
-enum class ClientMode {
-	OPERATOR,
-	REGULAR
-};
-
 class Client {
 private:
 	int _socket_fd;
@@ -59,6 +54,7 @@ public:
 	bool getPassMatch() {return this->_pass_match;}
 	bool getIsWelcomeSend(){return this->_is_welcome_send;}
 	Server &getServer(){return this->_server;}
+	std::string getCmdBuf() {return this->cmdBuf;}
 
 	//Setter
 	void setNick(const std::string &nick)  {this->_nick = nick;}
@@ -68,6 +64,7 @@ public:
 	void setMode(const unsigned int &mode)  {this->_mode = mode;}
 	void setIsRegistered(bool val) {this->_is_registered = val;}
 	void setPassMatch(bool val) {this->_pass_match = val;}
+	void setCmdBuf(std::string buf) {this->cmdBuf = buf;}
 	
 	//Functions
 	void addReply(std::string msg) {this->replyCmd += msg;};
@@ -76,10 +73,11 @@ public:
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
 	bool check_username(std::string username);
-	void parseCmds(std::string &buf);
+	void parseCmds();
 	void execCmds();
 	void registeredCmds();
 Client& operator=(const Client& other);
+	bool cmdIsTerminated();
 
 
 	void sendReply();

@@ -1,4 +1,5 @@
 #include "../includes/utils.hpp"
+#include <cstdlib>
 
 
 bool    errorMsg(std::string msg)

@@ -10,7 +10,7 @@
 
 Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _has_userlimit(false), _topic_restricted(false), _clients_limit(-1)
 {
-    this->_operators.push_back(client);
+    this->_operators.push_back(&client);
     if(!key.empty())
         this->_has_key = true;
     else
@@ -32,7 +32,7 @@ bool Channel::addUser(Client &client, std::string &key)
         client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
     else
     {
-        this->_users.push_back(client);
+        this->_users.push_back(&client);
         this->sendWelcome(client);
         return true;
     }
@@ -45,12 +45,12 @@ void Channel::clientsInChannel(Client &client)
 
     for(int i = 0; i < this->_users.size(); i++)
     {
-        client.addReply(this->_users[i].getNick() + " ");
+        client.addReply(this->_users[i]->getNick() + " ");
     }
 
     for(int i = 0; i < this->_operators.size(); i++)
     {
-        client.addReply("@" + this->_operators[i].getNick() + " ");
+        client.addReply("@" + this->_operators[i]->getNick() + " ");
     }
 
     client.addReply("\r\n");
@@ -69,37 +69,37 @@ bool Channel::isClientInvited(std::string nick)
 {
     for(int i = 0; i < this->_invited.size(); i++)
     {
-        if(this->_invited[i].getNick() == nick)
+        if(this->_invited[i]->getNick() == nick)
             return true;
     }
     return false;
 }
 
-std::vector<Client> &Channel::getUsers()
+std::vector<Client *> Channel::getUsers()
 {
 	return this->_users;
 }
 
-std::vector<Client> &Channel::getOperators()
+std::vector<Client *> Channel::getOperators()
 {
-	return this->_operators;
+    return this->_operators;
 }
 
-std::vector<Client> &Channel::getInvited()
+std::vector<Client *> Channel::getInvited()
 {
-	return this->_invited;
+    return this->_invited;
 }
 
 bool Channel::isClientInChannel(std::string nick)
 {
 	for(int i = 0; i < this->_users.size(); i++)
 	{
-		if(this->_users[i].getNick() == nick)
+		if(this->_users[i]->getNick() == nick)
 			return true;
 	}
 	for(int i = 0; i < this->_operators.size(); i++)
 	{
-		if(this->_operators[i].getNick() == nick)
+		if(this->_operators[i]->getNick() == nick)
 		return true;
 	}
 	return false;
@@ -109,19 +109,18 @@ void Channel::sendJoinMsgs(std::string clientNick)
 {
     for(size_t i = 0; i < this->getOperators().size(); i++)
     {
-        if(this->getOperators()[i].getNick() != clientNick)
+        if(this->getOperators()[i]->getNick() != clientNick)
         {
-            this->getOperators()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
-            this->getOperators()[i].sendReply();
+            this->getOperators()[i]->addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getOperators()[i]->sendReply();
         }
     }
 
     for(size_t i = 0; i < this->getUsers().size(); i++)
     {
-        if(this->getUsers()[i].getNick() != clientNick)
+        if(this->getUsers()[i]->getNick() != clientNick)
         {
-            this->getUsers()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
-            this->getUsers()[i].sendReply();
+            this->getUsers()[i]->addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
         }
     }
 }
@@ -129,7 +128,7 @@ void Channel::sendJoinMsgs(std::string clientNick)
 void Channel::inviteUser(Client &client, Client &target)
 {
     if(this->isClientInvited(target.getNick()) == false)
-        this->getInvited().push_back(target);
+        this->getInvited().push_back(&target);
     client.addReply(RPL_INVITING(client.getNick(), target.getNick(), this->getName()));
 }
 
@@ -156,9 +155,9 @@ void Channel::promoteUser(std::string &nick)
 {
     for(size_t i = 0; i < _users.size(); i++)
     {
-        if(_users[i].getNick() == nick)
+        if(_users[i]->getNick() == nick)
         {
-            this->addOperator(_users[i]);
+            this->addOperator(*_users[i]);
             _users.erase(_users.begin() + i);
             return;
         }
@@ -169,7 +168,7 @@ void Channel::demoteUser(std::string &nick)
 {
     for(size_t i = 0; i < _operators.size(); i++)
     {
-        if(_operators[i].getNick() == nick)
+        if(_operators[i]->getNick() == nick)
         {
             _users.push_back(_operators[i]);
             _operators.erase(_operators.begin() + i);
