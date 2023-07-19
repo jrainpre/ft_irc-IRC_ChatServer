@@ -79,31 +79,32 @@ bool    Server::startServer()
     return WORKED;
 }
 
-bool    Server::addClient()
+bool Server::addClient()
 {
     struct sockaddr_in cli_addr;
     int cliLen;
 
     pollfd pollClient;
 
-    //add new client
+    // add new client
     cliLen = sizeof(cli_addr);
-    pollClient.fd = accept(this->_server_fd, (sockaddr *) &cli_addr, (socklen_t *) &cliLen);
-    if(pollClient.fd < 0)
+    pollClient.fd = accept(this->_server_fd, (sockaddr*)&cli_addr, (socklen_t*)&cliLen);
+    if (pollClient.fd < 0)
     {
         std::cout << "accept() failed" << std::endl;
-        //Function which closes all FD in vector
+        // Function which closes all FD in vector
         return FAILED;
     }
 
     pollClient.events = POLLIN | POLLOUT;
     this->_sockets.push_back(pollClient);
-    const char *hi = "NOTICE :Welcome to the IRC server!\r\n";
+    const char* hi = "NOTICE :Welcome to the IRC server!\r\n";
     write(pollClient.fd, hi, strlen(hi));
-    Client newClient(pollClient.fd, *this);
+    Client* newClient = new Client(pollClient.fd, *this);
     this->_clients.push_back(newClient);
-	return WORKED;
+    return WORKED;
 }
+
 
 
 void    Server::handleMessage(int socket_fd)
@@ -200,17 +201,20 @@ void    Server::removeClientAndFd(int fd)
 
     for(unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if(fd == this->_clients[i].getSocketFd())
+        if(fd == this->_clients[i]->getSocketFd())
+        {
+            delete this->_clients[i];
             this->_clients.erase(_clients.begin() + i);
+        }
     }
 }
 
-Client &Server::getClientByFd(int fd)
+Client& Server::getClientByFd(int fd)
 {
-    for(int i = 0; i < this->_clients.size(); i++)
+    for (size_t i = 0; i < this->_clients.size(); i++)
     {
-        if(this->_clients[i].getSocketFd() == fd)
-            return this->_clients[i];
+        if (this->_clients[i]->getSocketFd() == fd)
+            return *this->_clients[i]; 
     }
     throw ExpextionNoMatchingClient();
 }
@@ -219,8 +223,8 @@ Client &Server::getClientByNick(std::string nick)
 {
 	for(int i = 0; i < this->_clients.size(); i++)
 	{
-		if(this->_clients[i].getNick() == nick)
-			return this->_clients[i];
+		if(this->_clients[i]->getNick() == nick)
+			return *this->_clients[i];
 	}
 	throw ExpextionNoMatchingClient();
 }
@@ -229,7 +233,7 @@ bool    Server::isNickInUse(std::string &nick)
 {
     for(int i = 0; i < this->getClients().size(); i++)
     {
-        if(this->getClients()[i].getNick() == nick)
+        if(this->getClients()[i]->getNick() == nick)
             return FAILED;
     }
     return WORKED;
@@ -291,7 +295,7 @@ bool Server::channelExists(std::string &name)
 {
     for(int i = 0; i < this->getChannels().size(); i++)
     {
-        if(this->getChannels()[i].getName() == name)
+        if(this->getChannels()[i]->getName() == name)
             return true;
     }
     return false;
@@ -301,53 +305,54 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
 {
     for(int i = 0; i < this->getChannels().size(); i++)
     {
-        if(this->getChannels()[i].getName() == channel)
+        if(this->getChannels()[i]->getName() == channel)
         {
-            this->getChannels()[i].addUser(client, key);
-            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
-                "\r\n", this->getChannels()[i].getUsers(), client);
-            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i].getName() + 
-                "\r\n", this->getChannels()[i].getOperators(), client);
-            this->sendReplyGroup(this->getChannels()[i].getUsers(), client);
-            this->sendReplyGroup(this->getChannels()[i].getOperators(), client);
-            if(this->getChannels()[i].getTopic().empty() == false)
-                client.addReply(RPL_TOPIC(client.getNick(), channel, this->getChannels()[i].getTopic()));
+            this->getChannels()[i]->addUser(client, key);
+            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i]->getName() + 
+                "\r\n", this->getChannels()[i]->getUsers(), client);
+            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i]->getName() + 
+                "\r\n", this->getChannels()[i]->getOperators(), client);
+            // this->sendReplyGroup(this->getChannels()[i]->getUsers(), client);
+            // this->sendReplyGroup(this->getChannels()[i]->getOperators(), client);
+            if(this->getChannels()[i]->getTopic().empty() == false)
+                client.addReply(RPL_TOPIC(client.getNick(), channel, this->getChannels()[i]->getTopic()));
             return;
         }
     }
 }
 
-void    Server::createChannel(Client &client, std::string &channel, std::string &key)
+void Server::createChannel(Client& client, std::string& channel, std::string& key)
 {
-    Channel ch(channel, key, client);
-    ch.sendWelcome(client);
+    Channel* ch = new Channel(channel, key, client); // Allocate the Channel object dynamically
+    ch->sendWelcome(client);
     this->_channels.push_back(ch);
 }
 
-Channel&	Server::getChannelByName(std::string &name)
+Channel& Server::getChannelByName(std::string& name)
 {
-	for(int i = 0; i < this->getChannels().size(); i++)
-	{
-		if(this->getChannels()[i].getName() == name)
-			return this->getChannels()[i];
-	}
+    for (size_t i = 0; i < this->_channels.size(); i++)
+    {
+        if (this->_channels[i]->getName() == name)
+            return *(this->_channels[i]); 
+    }
+    throw std::runtime_error("Channel not found");
 }
 
-void Server::addReplyGroup(std::string msg, std::vector<Client > &clients, Client &sender)
+void Server::addReplyGroup(std::string msg, std::vector<Client *> clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
-		if(clients[i].getNick() != sender.getNick())
-			clients[i].addReply(msg);
+		if(clients[i]->getNick() != sender.getNick())
+			clients[i]->addReply(msg);
 	}
 }
 
-void Server::sendReplyGroup(std::vector<Client > &clients, Client &sender)
+void Server::sendReplyGroup(std::vector<Client *> clients, Client &sender)
 {
 	for(int i = 0; i < clients.size(); i++)
 	{
-		if(clients[i].getNick() != sender.getNick())
-		clients[i].sendReply();
+		if(clients[i]->getNick() != sender.getNick())
+		clients[i]->sendReply();
 	}
 }
 
@@ -358,7 +363,7 @@ bool Server::isOperator(std::string nick, std::string channel)
     Channel &ch = this->getChannelByName(channel);
     for(int i = 0; i < ch.getOperators().size(); i++)
     {
-        if(ch.getOperators()[i].getNick() == nick)
+        if(ch.getOperators()[i]->getNick() == nick)
             return true;
     }
     return false;
@@ -371,12 +376,12 @@ bool Server::isUserInChannel(std::string nick, std::string channel)
     Channel &ch = this->getChannelByName(channel);
     for(int i = 0; i < ch.getUsers().size(); i++)
     {
-        if(ch.getUsers()[i].getNick() == nick)
+        if(ch.getUsers()[i]->getNick() == nick)
             return true;
     }
     for(int i = 0; i < ch.getOperators().size(); i++)
     {
-        if(ch.getOperators()[i].getNick() == nick)
+        if(ch.getOperators()[i]->getNick() == nick)
             return true;
     }
     return false;

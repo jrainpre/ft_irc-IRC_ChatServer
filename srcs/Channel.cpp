@@ -10,7 +10,7 @@ Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _i
 
 Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
 {
-    this->_operators.push_back(client);
+    this->_operators.push_back(&client);
 }
 
 Channel::~Channel()
@@ -35,7 +35,7 @@ void Channel::addUser(Client &client, std::string &key)
     //     client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
     //     return;
     // }
-    this->_users.push_back(client);
+    this->_users.push_back(&client);
     this->_active_clients++;
     this->sendWelcome(client);
 }
@@ -46,12 +46,12 @@ void Channel::clientsInChannel(Client &client)
 
     for(int i = 0; i < this->_users.size(); i++)
     {
-        client.addReply(this->_users[i].getNick() + " ");
+        client.addReply(this->_users[i]->getNick() + " ");
     }
 
     for(int i = 0; i < this->_operators.size(); i++)
     {
-        client.addReply("@" + this->_operators[i].getNick() + " ");
+        client.addReply("@" + this->_operators[i]->getNick() + " ");
     }
 
     client.addReply("\r\n");
@@ -70,37 +70,37 @@ bool Channel::isClientInvited(std::string &nick)
 {
     for(int i = 0; i < this->_invited.size(); i++)
     {
-        if(this->_invited[i].getNick() == nick)
+        if(this->_invited[i]->getNick() == nick)
             return true;
     }
     return false;
 }
 
-std::vector<Client> &Channel::getUsers()
+std::vector<Client *> Channel::getUsers()
 {
 	return this->_users;
 }
 
-std::vector<Client> &Channel::getOperators()
+std::vector<Client *> Channel::getOperators()
 {
-	return this->_operators;
+    return this->_operators;
 }
 
-std::vector<Client> &Channel::getInvited()
+std::vector<Client *> Channel::getInvited()
 {
-	return this->_invited;
+    return this->_invited;
 }
 
 bool Channel::isClientInChannel(std::string nick)
 {
 	for(int i = 0; i < this->_users.size(); i++)
 	{
-		if(this->_users[i].getNick() == nick)
+		if(this->_users[i]->getNick() == nick)
 			return true;
 	}
 	for(int i = 0; i < this->_operators.size(); i++)
 	{
-		if(this->_operators[i].getNick() == nick)
+		if(this->_operators[i]->getNick() == nick)
 		return true;
 	}
 	return false;
@@ -110,19 +110,19 @@ void Channel::sendJoinMsgs(std::string clientNick)
 {
     for(size_t i = 0; i < this->getOperators().size(); i++)
     {
-        if(this->getOperators()[i].getNick() != clientNick)
+        if(this->getOperators()[i]->getNick() != clientNick)
         {
-            this->getOperators()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
-            this->getOperators()[i].sendReply();
+            this->getOperators()[i]->addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getOperators()[i]->sendReply();
         }
     }
 
     for(size_t i = 0; i < this->getUsers().size(); i++)
     {
-        if(this->getUsers()[i].getNick() != clientNick)
+        if(this->getUsers()[i]->getNick() != clientNick)
         {
-            this->getUsers()[i].addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
-            this->getUsers()[i].sendReply();
+            this->getUsers()[i]->addChannel(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getUsers()[i]->sendReply();
         }
     }
 }
@@ -130,7 +130,7 @@ void Channel::sendJoinMsgs(std::string clientNick)
 void Channel::inviteUser(Client &client, std::string nick)
 {
     if(this->isClientInvited(nick) == false)
-        this->getInvited().push_back(client);
+        this->getInvited().push_back(&client);
     client.addReply(RPL_INVITING(client.getNick(), nick, this->getName()));
 }
 

@@ -19,11 +19,6 @@
 class Channel;
 class Server;
 
-enum class ClientMode {
-	OPERATOR,
-	REGULAR
-};
-
 class Client {
 private:
 	int _socket_fd;

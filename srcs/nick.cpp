@@ -30,7 +30,7 @@ bool    isNickInUse(Server &server, std::string &nick)
 {
     for(int i = 0; i < server.getClients().size(); i++)
     {
-        if(server.getClients()[i].getNick() == nick)
+        if(server.getClients()[i]->getNick() == nick)
             return FAILED;
     }
     return WORKED;
