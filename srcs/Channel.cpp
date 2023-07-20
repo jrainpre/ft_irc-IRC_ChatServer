@@ -33,6 +33,7 @@ bool Channel::addUser(Client &client, std::string &key)
     else
     {
         this->_users.push_back(&client);
+		client.addChannel(this);
         this->sendWelcome(client);
         return true;
     }

@@ -67,3 +67,7 @@
 
 //Mode
 #define RPL_CHANNELMODEIS(client, channel, modestring, arguments) (":localhost 324 " + client + " " + channel + " " + modestring + " " + arguments + "\r\n")
+
+//Quit
+//:NickName!UserName@HostName QUIT :Quit message goes here\r\n
+#define SENDQUIT(nickname, username, message)(":" + nickname + "!" + username + "@localhost QUIT " + message + "\r\n")

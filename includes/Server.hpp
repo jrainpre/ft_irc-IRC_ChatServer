@@ -88,4 +88,8 @@ public:
 	void freeSockets();
 	void freeServer();
 
+	void    removeClientAndFdByNick(std::string nick);
+	void deleteClientCheckChannels(Client &client);
+	void deleteEmptyChannels();
+
 };

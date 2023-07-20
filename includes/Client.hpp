@@ -30,7 +30,8 @@ private:
 	bool _pass_match;
 	bool _is_registered;
 	bool _is_welcome_send;
-	std::vector<Channel> _channels;
+	bool _is_quited;
+	std::vector<Channel *> _channels;
 	std::vector<std::vector<std::string> > _cmds;
 	std::string cmdBuf;
 	Server &_server;
@@ -47,7 +48,7 @@ public:
 	std::string getRealname()  {return this->_realname;}
 	unsigned int getState()  {return this->_state;}
 	unsigned int getMode() {return this->_mode;}
-	std::vector<Channel> &getChannels() {return this->_channels;}
+	std::vector<Channel *> &getChannels() {return this->_channels;}
 	int	getSocketFd() {return this->_socket_fd;}
 	std::vector<std::vector<std::string> > &getCmds() {return this->_cmds;}
 	bool getIsRegistered() {return this->_is_registered;}
@@ -55,6 +56,7 @@ public:
 	bool getIsWelcomeSend(){return this->_is_welcome_send;}
 	Server &getServer(){return this->_server;}
 	std::string getCmdBuf() {return this->cmdBuf;}
+	bool getIsQuited() {return this->_is_quited;}
 
 	//Setter
 	void setNick(const std::string &nick)  {this->_nick = nick;}
@@ -65,21 +67,20 @@ public:
 	void setIsRegistered(bool val) {this->_is_registered = val;}
 	void setPassMatch(bool val) {this->_pass_match = val;}
 	void setCmdBuf(std::string buf) {this->cmdBuf = buf;}
+	void setIsQuited(bool val) {this->_is_quited = val;}
 	
 	//Functions
 	void addReply(std::string msg) {this->replyCmd += msg;};
 	void addReplyGroup(std::vector<Client> &clients, std::string msg);
-	void addChannel(Channel channel); 
+	void addChannel(Channel *channel); 
 	void removeChannel(std::string channel);
 	bool check_nick(std::string nick);
 	bool check_username(std::string username);
 	void parseCmds();
 	void execCmds();
 	void registeredCmds();
-Client& operator=(const Client& other);
+	Client& operator=(const Client& other);
 	bool cmdIsTerminated();
-
-
 	void sendReply();
 
 };

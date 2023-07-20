@@ -154,7 +154,7 @@ bool    Server::serverLoop()
 
     std::cout << "Waiting for connections..." << std::endl;
 
-    while(g_terminate == false)
+     while(g_terminate == false)
     {
         if(poll(this->_sockets.data(), this->_sockets.size(), -42) < 0 && !g_terminate)
         {
@@ -210,6 +210,24 @@ void    Server::removeClientAndFd(int fd)
     }
 }
 
+void    Server::removeClientAndFdByNick(std::string nick)
+{
+	Client &client = getClientByNick(nick);
+    for(unsigned long i = 0; i < this->_sockets.size(); i++)
+    {
+        if(client.getSocketFd() == this->_sockets[i].fd)
+            this->_sockets.erase(this->_sockets.begin() + i);
+    }
+    for(unsigned long i = 0; i < this->_clients.size(); i++)
+    {
+        if(client.getNick() == this->_clients[i]->getNick())
+        {
+            delete this->_clients[i];
+            this->_clients.erase(_clients.begin() + i);
+        }
+    }
+}
+
 Client& Server::getClientByFd(int fd)
 {
     for (size_t i = 0; i < this->_clients.size(); i++)
@@ -246,6 +264,11 @@ void    Server::cmdLoop(Client &client)
     {
         execCmd(client);
         client.getCmds().erase(client.getCmds().begin());
+		if (client.getIsQuited())
+		{
+			this->removeClientAndFdByNick(client.getNick());
+			return;
+		}
     }
     // client.sendReply();
     this->sendWelcome(client);
@@ -328,6 +351,7 @@ void Server::createChannel(Client& client, std::string& channel, std::string& ke
     Channel* ch = new Channel(channel, key, client); // Allocate the Channel object dynamically
     ch->sendWelcome(client);
     this->_channels.push_back(ch);
+	client.addChannel(ch);
 }
 
 Channel& Server::getChannelByName(std::string& name)
@@ -423,4 +447,25 @@ void Server::freeServer()
 	this->freeClient();
 	this->freeChannel();
 	this->freeSockets();
+}
+
+void Server::deleteEmptyChannels()
+{
+	for (size_t i = 0; i < this->getChannels().size(); i++)
+	{
+		if (this->getChannels()[i]->getUsers().size() == 0)
+		{
+			delete this->getChannels()[i];
+			this->getChannels().erase(this->getChannels().begin() + i);
+		}
+	}
+}
+
+void Server::deleteClientCheckChannels(Client &client)
+{
+	for (size_t i = 0; i < client.getChannels().size(); i++)
+	{
+		client.getChannels()[i]->deleteClient(client.getNick());
+	}
+	deleteEmptyChannels();
 }

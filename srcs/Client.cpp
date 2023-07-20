@@ -1,7 +1,7 @@
 #include "../includes/Client.hpp"
 #include "../includes/commands.hpp"
 
-Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _state(0), _mode(0), _server(server), _is_welcome_send(false)
+Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _is_quited(false), _state(0), _mode(0), _server(server), _is_welcome_send(false)
 {
     std::cout << "Client Created" << std::endl;
 }
@@ -11,7 +11,7 @@ Client::~Client()
 
 }
 
-void Client::addChannel(Channel channel)
+void Client::addChannel(Channel *channel)
 {
     this->_channels.push_back(channel);
 }
