@@ -27,24 +27,25 @@
 
 void    user(Server &server, Client &client, std::vector<std::string> &cmd)
 {
-    if(client.getIsRegistered() == true)
-    {
-        client.addReply(ERR_ALREADYREGISTERED(client.getNick()));
-        return;
-    }
-    if(cmd.size() > 2)
-    {
-        for(int i = 0; i < cmd.size(); i++)
-        {
-            if(cmd[i] == "*\0" || cmd[i] == "0\0")
-                cmd.erase(cmd.begin() + i);
-        }
-    }
-    if(cmd.size() < 2)
+    (void)server;
+    if(cmd.size() == 1)
     {
         client.addReply(ERR_NEEDMOREPARAMS(client.getNick(), "USER"));
         return;
     }
-    client.setUsername(cmd[1]);
-    client.setRealname(cmd[2]);   //If any more arguments behind [2], add them as well as realname. Realname can have spaces " "
+    else if(client.getIsRegistered() == true)
+    {
+        client.addReply(ERR_ALREADYREGISTERED(client.getNick()));
+        return;
+    }
+    std::string username = cmd[1];
+    std::string cmds = getWholeCmd(cmd);
+    std::string realname = cmds.substr(cmds.find_first_of(':') + 1);
+    if(username.empty() || realname.empty())
+        client.addReply(ERR_NEEDMOREPARAMS(client.getNick(), "USER"));
+    else
+    {
+        client.setUsername(username);
+        client.setRealname(realname); 
+    }
 }

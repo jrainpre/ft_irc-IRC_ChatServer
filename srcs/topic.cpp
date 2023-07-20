@@ -30,9 +30,9 @@ void    setTopic(Server &server, Client &client, std::string channel, std::vecto
         return;
     }
     ch.setTopic(newTopic);
-    server.addReplyGroup(":" + client.getNick() + "!localhost TOPIC " + channel + " " + newTopic + "\r\n", ch.getUsers(), client);
-    server.addReplyGroup(":" + client.getNick() + "!localhost TOPIC " + channel + " " + newTopic + "\r\n", ch.getOperators(), client);
-    client.addReply(":" + client.getNick() + "!localhost TOPIC " + channel + " " + newTopic + "\r\n");
+    server.addReplyGroup(TOPIC(client.getNick(), channel, newTopic), ch.getUsers(), client);
+    server.addReplyGroup(TOPIC(client.getNick(), channel, newTopic), ch.getOperators(), client);
+    client.addReply(TOPIC(client.getNick(), channel, newTopic));
     server.sendReplyGroup(ch.getOperators(), client);
     server.sendReplyGroup(ch.getUsers(), client);
 }

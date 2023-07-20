@@ -27,9 +27,9 @@ public:
 	std::string getName(){return this->_name;}
 	std::string getTopic(){return this->_topic;}
 	std::string getKey(){return this->_key;}
-	std::vector<Client *> getUsers();
-	std::vector<Client *> getOperators();
-	std::vector<Client *> getInvited();
+	std::vector<Client *> &getUsers();
+	std::vector<Client *> &getOperators();
+	std::vector<Client *> &getInvited();
 	bool getInviteOnly(){return this->_invite_only;}
 	bool getHasKey(){return this->_has_key;}
 	bool getTopicRestricted(){return this->_topic_restricted;}
@@ -60,4 +60,5 @@ public:
 	std::string getAllModes();
 	void promoteUser(std::string &nick);
 	void demoteUser(std::string &nick);
+	void deleteClient(std::string nick);
 };

@@ -8,7 +8,7 @@
 ################################################################################
 NAME        := irc
 CC         := c++
-FLAGS    :=  -g 
+FLAGS    :=  -g -std=c++98 -Wall -Werror -Wextra
  
 ################################################################################
 #                                 PROGRAM'S SRCS                               #
@@ -30,7 +30,9 @@ SRCS        :=      srcs/main.cpp \
                           srcs/pass.cpp \
                           srcs/kick.cpp \
                           srcs/Server.cpp \
-                          srcs/Privmsg.cpp \
+                          srcs/privmsg.cpp \
+                          srcs/part.cpp \
+                          srcs/quit.cpp
                           
 OBJS        := ${SRCS:.cpp=.o}
 

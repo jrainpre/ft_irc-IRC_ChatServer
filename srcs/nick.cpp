@@ -28,7 +28,7 @@
 
 bool    isNickInUse(Server &server, std::string &nick)
 {
-    for(int i = 0; i < server.getClients().size(); i++)
+    for(size_t i = 0; i < server.getClients().size(); i++)
     {
         if(server.getClients()[i]->getNick() == nick)
             return FAILED;
@@ -40,9 +40,10 @@ bool    isValidNick(std::string &nick)
 {
     if(nick[0] == ':' || nick[0] == '#' || nick[0] == ' ')
         return FAILED;
-    if(nick.size() > 30)
+    else if(nick.size() > 30)
         return FAILED;
-	return WORKED;
+	else
+        return WORKED;
 }
 
 //have to check the "Client" in error msg when no nick name is given
@@ -66,7 +67,7 @@ void    nick(Server &server, Client &client, std::vector<std::string> &cmd)
     else
     {
         if(client.getIsRegistered() == true)
-            client.addReply(":" + client.getNick() + "!localhost NICK " + nick + "\r\n");
+            client.addReply(NICK(client.getNick(), nick));
         client.setNick(nick);
     }
 }

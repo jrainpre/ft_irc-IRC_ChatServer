@@ -1,5 +1,14 @@
 #pragma once
 
+#define INVITE(client, nick, channel) (":" + client + "!localhost INVITE " + nick + " " + channel + "\r\n")
+#define KICK(client, nick, channel, msg) (":" + client + "!localhost  KICK " + channel + " " + nick + " " + msg + "\r\n")
+#define MODES(client, channel,modes, arg) (":" + client + "!localhost MODE " + channel + " " + modes + " " + arg + "\r\n")
+#define JOIN(client, channel) (":" + client + "!localhost JOIN " + channel + "\r\n")
+#define NICK(client, nick) (":" + client + "!localhost NICK " + nick + "\r\n")
+#define PART(client, channel) (":" + client + "!localhost PART " + channel + "\r\n")
+#define PONG(msg) ("PONG " + msg + "\r\n")
+#define TOPIC(client, channel, newTopic) (":" + client + "!localhost TOPIC " + channel + " " + newTopic + "\r\n")
+
 //Welcome Replys
 
 #define RPL_WELCOME(nick, user) (":localhost 001 " + nick + " :Welcome to the 42 Vienna Network, " + nick + "\r\n")
