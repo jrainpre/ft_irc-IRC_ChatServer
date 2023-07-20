@@ -1,14 +1,6 @@
 #include "../includes/Channel.hpp"
 
-// Channel::Channel(std::string name) : _name(name), _key(""), _invite_only(false), _active_clients(0)
-// {
-// }
-
-// Channel::Channel(std::string name, std::string key) : _name(name), _key(key), _invite_only(false), _active_clients(0), _clients_limit(30)
-// {
-// }
-
-Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _has_userlimit(false), _topic_restricted(false), _clients_limit(-1)
+Channel::Channel(std::string name, std::string key, Client &client) : _name(name), _key(key), _invite_only(false), _topic_restricted(false), _has_userlimit(false), _clients_limit(-1)
 {
     this->_operators.push_back(&client);
     if(!key.empty())
@@ -29,7 +21,7 @@ bool Channel::addUser(Client &client, std::string &key)
     else if(this->_has_userlimit == true && this->_clients_limit <= this->getUsers().size() + this->getOperators().size())
         client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
     else if(this->_invite_only == true && this->isClientInvited(client.getNick()) == false)
-        client.addReply(ERR_CHANNELISFULL(client.getNick(), this->_name));
+        client.addReply(ERR_INVITEONLYCHAN(client.getNick(), this->_name));
     else
     {
         this->_users.push_back(&client);
@@ -44,12 +36,12 @@ void Channel::clientsInChannel(Client &client)
 {
     client.addReply(RPL_NAMREPLY(client.getNick(), this->_name));
 
-    for(int i = 0; i < this->_users.size(); i++)
+    for(size_t i = 0; i < this->_users.size(); i++)
     {
         client.addReply(this->_users[i]->getNick() + " ");
     }
 
-    for(int i = 0; i < this->_operators.size(); i++)
+    for(size_t i = 0; i < this->_operators.size(); i++)
     {
         client.addReply("@" + this->_operators[i]->getNick() + " ");
     }
@@ -59,7 +51,7 @@ void Channel::clientsInChannel(Client &client)
 
 void Channel::sendWelcome(Client &client)
 {
-    client.addReply(":" + client.getNick() + "!localhost JOIN " + this->_name + "\r\n");
+    client.addReply(JOIN(client.getNick(), this->_name));
     if(this->_topic.empty() == false)
         client.addReply(RPL_TOPIC(client.getNick(), this->_name, this->_topic));
     this->clientsInChannel(client);
@@ -68,7 +60,7 @@ void Channel::sendWelcome(Client &client)
 
 bool Channel::isClientInvited(std::string nick)
 {
-    for(int i = 0; i < this->_invited.size(); i++)
+    for(size_t i = 0; i < this->_invited.size(); i++)
     {
         if(this->_invited[i]->getNick() == nick)
             return true;
@@ -76,29 +68,29 @@ bool Channel::isClientInvited(std::string nick)
     return false;
 }
 
-std::vector<Client *> Channel::getUsers()
+std::vector<Client *> &Channel::getUsers()
 {
 	return this->_users;
 }
 
-std::vector<Client *> Channel::getOperators()
+std::vector<Client *> &Channel::getOperators()
 {
     return this->_operators;
 }
 
-std::vector<Client *> Channel::getInvited()
+std::vector<Client *> &Channel::getInvited()
 {
     return this->_invited;
 }
 
 bool Channel::isClientInChannel(std::string nick)
 {
-	for(int i = 0; i < this->_users.size(); i++)
+	for(size_t i = 0; i < this->_users.size(); i++)
 	{
 		if(this->_users[i]->getNick() == nick)
 			return true;
 	}
-	for(int i = 0; i < this->_operators.size(); i++)
+	for(size_t i = 0; i < this->_operators.size(); i++)
 	{
 		if(this->_operators[i]->getNick() == nick)
 		return true;
@@ -148,7 +140,7 @@ std::string Channel::getAllModes()
     if(this->_topic_restricted)
         modes += "t";
     if(this->_has_userlimit)
-        modes += "l " + this->_clients_limit;
+        modes += "l " + toString(_clients_limit);
     return modes;
 }
 
@@ -177,3 +169,24 @@ void Channel::demoteUser(std::string &nick)
         }
     }
 }
+
+void Channel::deleteClient(std::string nick)
+{
+    for(size_t i = 0; i < this->_users.size(); i++)
+    {
+        if(this->_users[i]->getNick() == nick)
+        {
+            this->_users.erase(this->_users.begin() + i);
+            break;
+        }
+    }
+    for(size_t i = 0; i < this->_operators.size(); i++)
+    {
+        if(this->_operators[i]->getNick() == nick)
+        {
+            this->_operators.erase(this->_operators.begin() + i);
+            break;
+        }
+    }
+}
+

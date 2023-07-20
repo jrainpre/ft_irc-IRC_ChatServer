@@ -1,7 +1,7 @@
 #include "../includes/Client.hpp"
 #include "../includes/commands.hpp"
 
-Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _pass_match(false), _is_registered(false), _is_quited(false), _state(0), _mode(0), _server(server), _is_welcome_send(false)
+Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _state(0), _mode(0), _pass_match(false), _is_registered(false), _is_welcome_send(false), _is_quited(false), _server(server)
 {
     std::cout << "Client Created" << std::endl;
 }
@@ -16,26 +16,9 @@ void Client::addChannel(Channel *channel)
     this->_channels.push_back(channel);
 }
 
-void Client::removeChannel(std::string channel)
-{
-    //later
-}
-
-// bool Client::check_nick(std::string nick)
-// {
-    
-// }
-
-// bool Client::check_username(std::string username)
-// {
-
-// }
-
-
 void Client::parseCmds()
 {
     std::vector<std::string> lines;
-    std::size_t pos;
     
     lines = split(cmdBuf, "\n", false); // changed to false, delete backslash n
     for (size_t i = 0; i < lines.size(); ++i)
@@ -55,8 +38,6 @@ void Client::sendReply()
     	this->replyCmd.clear();
 	}
 }
-
-
 
 Client& Client::operator=(const Client& other) {
 	_socket_fd = other._socket_fd;
@@ -84,4 +65,3 @@ bool Client::cmdIsTerminated()
 		return true;
 	return false;
 }
-

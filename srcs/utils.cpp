@@ -11,9 +11,9 @@ bool    errorMsg(std::string msg)
 //1 through 65535
 bool    validPort(std::string port)
 {
-    int len = 1;
-    int iPort = std::atoi(port.c_str());
-    int tmp = iPort;
+    size_t len = 1;
+    size_t iPort = std::atoi(port.c_str());
+    size_t tmp = iPort;
     while(tmp /= 10)
         len++;
 
@@ -29,7 +29,7 @@ std::string getSubstr(std::string &str, std::string del)
     std::string ret;
     if(str.empty())
         return ret;
-    if(pos_end == str.find(del, 0) == std::string::npos)
+    if((pos_end = str.find(del, 0)) == std::string::npos)
     {
         ret = str;
         str.clear();
@@ -71,7 +71,7 @@ std::vector<std::string> split(std::string &s, std::string delimit, bool keepLim
 std::string addMsgs(int itStart, std::vector<std::string> &cmd)
 {
     std::string ret;
-    for(int i = itStart; i < cmd.size(); i++)
+    for(size_t i = itStart; i < cmd.size(); i++)
     {
         ret += cmd[i];
         if(i + 1 < cmd.size())

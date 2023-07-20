@@ -163,7 +163,7 @@ bool    Server::serverLoop()
             return FAILED;
         }
 
-        for(int i = 0; i < this->_sockets.size(); i++)
+        for(size_t i = 0; i < this->_sockets.size(); i++)
         {
             if(this->_sockets[i].revents & POLLIN)
             {
@@ -240,7 +240,7 @@ Client& Server::getClientByFd(int fd)
 
 Client &Server::getClientByNick(std::string nick)
 {
-	for(int i = 0; i < this->_clients.size(); i++)
+	for(size_t i = 0; i < this->_clients.size(); i++)
 	{
 		if(this->_clients[i]->getNick() == nick)
 			return *this->_clients[i];
@@ -250,7 +250,7 @@ Client &Server::getClientByNick(std::string nick)
 
 bool    Server::isNickInUse(std::string &nick)
 {
-    for(int i = 0; i < this->getClients().size(); i++)
+    for(size_t i = 0; i < this->getClients().size(); i++)
     {
         if(this->getClients()[i]->getNick() == nick)
             return FAILED;
@@ -283,12 +283,38 @@ void    Server::sendWelcome(Client &client)
         client.setIsRegistered(true);
         client.addReply(RPL_WELCOME(client.getNick(), client.getUsername()));
         client.addReply(RPL_YOURHOST((std::string)"localhost",(std::string) "1.0", client.getNick()));
-        client.addReply(RPL_CREATED((std::string) "2023.09.10", client.getNick()));
+        client.addReply(RPL_CREATED(this->_startup_time, client.getNick()));
         client.addReply(RPL_MYINFO((std::string) "localhost", (std::string) "1.0", (std::string) "o", (std::string) "itkol", client.getNick()));
-        client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 CHANNELLEN=32 NICKLEN=30", client.getNick()));
-        // client.sendReply();
+        client.addReply(RPL_ISUPPORT((std::string) "MAXCHANNELS=20 NICKLEN=30", client.getNick()));
+        sendMsgOfDay(client);
     }
 }
+
+void    Server::sendMsgOfDay(Client &client)
+{
+    std::string irc_art = 
+    "IIIIIIIIII  RRRRRRRRRRRRRRRRR            CCCCCCCCCCCCC\n"
+    "I::::::::I  R::::::::::::::::R        CCC::::::::::::C\n"
+    "I::::::::I  R::::::RRRRRR:::::R     CC:::::::::::::::C\n"
+    "II::::::II  RR:::::R     R:::::R   C:::::CCCCCCCC::::C\n"
+    "  I::::I      R::::R     R:::::R  C:::::C       CCCCCC\n"
+    "  I::::I      R::::R     R:::::RC:::::C\n"
+    "  I::::I      R::::RRRRRR:::::R  C:::::C\n"
+    "  I::::I      R:::::::::::::RR   C:::::C\n"
+    "  I::::I      R::::RRRRRR:::::R  C:::::C\n"
+    "  I::::I      R::::R     R:::::RC:::::C\n"
+    "  I::::I      R::::R     R:::::RC:::::C\n"
+    "  I::::I      R::::R     R:::::R  C:::::C       CCCCCC\n"
+    "II::::::II  RR:::::R     R:::::R   C:::::CCCCCCCC::::C\n"
+    "I::::::::I  R::::::R     R:::::R    CC:::::::::::::::C\n"
+    "I::::::::I  R::::::R     R:::::R      CCC::::::::::::C\n"
+    "IIIIIIIIII  RRRRRRRR     RRRRRRR         CCCCCCCCCCCCC";
+    std::istringstream iss(irc_art);
+    std::string line;
+    while(std::getline(iss, line))
+        client.addReply(":localhost 372 " + client.getNick() + " " + line + "\r\n");
+}  
+
 
 bool    Server::isUnregisteredCheck(Client &client, std::string cmd)
 {
@@ -308,7 +334,10 @@ void Server::execCmd(Client &client)
     std::string cmd = client.getCmds()[0][0];
 
     if(isUnregisteredCheck(client, cmd) == false)
+    {
         return;
+    }
+    
 	if (CmdIsValid(cmd, cmdMap))
 		cmdMap[cmd](*this, client, client.getCmds()[0]);
 	else
@@ -317,7 +346,7 @@ void Server::execCmd(Client &client)
 
 bool Server::channelExists(std::string &name)
 {
-    for(int i = 0; i < this->getChannels().size(); i++)
+    for(size_t i = 0; i < this->getChannels().size(); i++)
     {
         if(this->getChannels()[i]->getName() == name)
             return true;
@@ -327,18 +356,14 @@ bool Server::channelExists(std::string &name)
 
 void    Server::joinChannel(Client &client, std::string &channel, std::string &key)
 {
-    for(int i = 0; i < this->getChannels().size(); i++)
+    for(size_t i = 0; i < this->getChannels().size(); i++)
     {
         if(this->getChannels()[i]->getName() == channel)
         {
             if(this->getChannels()[i]->addUser(client, key) == false)
                 return;
-            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i]->getName() + 
-                "\r\n", this->getChannels()[i]->getUsers(), client);
-            this->addReplyGroup(":" + client.getNick() + "!localhost JOIN " + this->getChannels()[i]->getName() + 
-                "\r\n", this->getChannels()[i]->getOperators(), client);
-            // this->sendReplyGroup(this->getChannels()[i]->getUsers(), client);
-            // this->sendReplyGroup(this->getChannels()[i]->getOperators(), client);
+            this->addReplyGroup(JOIN(client.getNick(), this->getChannels()[i]->getName()), this->getChannels()[i]->getUsers(), client);
+            this->addReplyGroup(JOIN(client.getNick(), this->getChannels()[i]->getName()), this->getChannels()[i]->getOperators(), client);
             if(this->getChannels()[i]->getTopic().empty() == false)
                 client.addReply(RPL_TOPIC(client.getNick(), channel, this->getChannels()[i]->getTopic()));
             return;
@@ -366,7 +391,7 @@ Channel& Server::getChannelByName(std::string& name)
 
 void Server::addReplyGroup(std::string msg, std::vector<Client *> clients, Client &sender)
 {
-	for(int i = 0; i < clients.size(); i++)
+	for(size_t i = 0; i < clients.size(); i++)
 	{
 		if(clients[i]->getNick() != sender.getNick())
 			clients[i]->addReply(msg);
@@ -375,7 +400,7 @@ void Server::addReplyGroup(std::string msg, std::vector<Client *> clients, Clien
 
 void Server::sendReplyGroup(std::vector<Client *> clients, Client &sender)
 {
-	for(int i = 0; i < clients.size(); i++)
+	for(size_t i = 0; i < clients.size(); i++)
 	{
 		if(clients[i]->getNick() != sender.getNick())
 		clients[i]->sendReply();
@@ -387,7 +412,7 @@ bool Server::isOperator(std::string nick, std::string channel)
     if(this->channelExists(channel) == false)
         return false;
     Channel &ch = this->getChannelByName(channel);
-    for(int i = 0; i < ch.getOperators().size(); i++)
+    for(size_t i = 0; i < ch.getOperators().size(); i++)
     {
         if(ch.getOperators()[i]->getNick() == nick)
             return true;
@@ -400,12 +425,12 @@ bool Server::isUserInChannel(std::string nick, std::string channel)
     if(this->channelExists(channel) == false)
         return false;
     Channel &ch = this->getChannelByName(channel);
-    for(int i = 0; i < ch.getUsers().size(); i++)
+    for(size_t i = 0; i < ch.getUsers().size(); i++)
     {
         if(ch.getUsers()[i]->getNick() == nick)
             return true;
     }
-    for(int i = 0; i < ch.getOperators().size(); i++)
+    for(size_t i = 0; i < ch.getOperators().size(); i++)
     {
         if(ch.getOperators()[i]->getNick() == nick)
             return true;
@@ -416,7 +441,7 @@ bool Server::isUserInChannel(std::string nick, std::string channel)
 void Server::freeClient()
 {
 	std::cout << "size: " << this-> _clients.size() << std::endl;
-	for(int i = 0; i < this->_clients.size(); i++)
+	for(size_t i = 0; i < this->_clients.size(); i++)
 	{
 			std::cout << "Client: " << this->_clients[i]->getNick() << std::endl;
 			std::cout << this->_clients[i]->getSocketFd() << std::endl;
@@ -428,7 +453,7 @@ void Server::freeClient()
 
 void Server::freeChannel()
 {
-	for(int i = 0; i < this->_channels.size(); i++)
+	for(size_t i = 0; i < this->_channels.size(); i++)
 	{
 			delete this->_channels[i];
 	}
@@ -436,7 +461,7 @@ void Server::freeChannel()
 
 void Server::freeSockets()
 {
-	for(int i = 0; i < this->_sockets.size(); i++)
+	for(size_t i = 0; i < this->_sockets.size(); i++)
 	{
 			close(this->_sockets[i].fd);
 	}
@@ -453,7 +478,7 @@ void Server::deleteEmptyChannels()
 {
 	for (size_t i = 0; i < this->getChannels().size(); i++)
 	{
-		if (this->getChannels()[i]->getUsers().size() == 0)
+		if (this->getChannels()[i]->getUsers().size() == 0 && this->getChannels()[i]->getOperators().size() == 0)
 		{
 			delete this->getChannels()[i];
 			this->getChannels().erase(this->getChannels().begin() + i);
@@ -468,4 +493,10 @@ void Server::deleteClientCheckChannels(Client &client)
 		client.getChannels()[i]->deleteClient(client.getNick());
 	}
 	deleteEmptyChannels();
+}
+
+void Server::setStartupTime(struct tm *time)
+{
+    this->_startup_time = toString(time->tm_mday) + "."  + toString(time->tm_mon + 1) + "." + toString(time->tm_year + 1900);
+    this->_startup_time += " | " + toString(time->tm_hour) + ":" + toString(time->tm_min) + ":" + toString(time->tm_sec);
 }

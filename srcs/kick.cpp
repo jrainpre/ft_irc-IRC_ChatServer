@@ -5,13 +5,12 @@ void    kickUser(Server &server, Client &client, std::string user, std::string c
 {
     if(server.channelExists(channel) == false)
         client.addReply(ERR_NOSUCHCHANNEL(client.getNick(), channel));
-    Channel &ch = server.getChannelByName(channel);
     if(server.isOperator(client.getNick(), channel) == false)
         client.addReply(ERR_CHANOPRIVSNEEDED(client.getNick(), channel));
     else if(server.isUserInChannel(user, channel))
         client.addReply(ERR_USERNOTINCHANNEL(client.getNick(), user, channel));
     else
-        client.addReply(":" + client.getNick() + "!localhost  KICK " + channel + " " + user + " " + msg + "\r\n");
+        client.addReply(KICK(client.getNick(), user, channel, msg));
 }
 
 void    kick(Server &server, Client &client, std::vector<std::string> &cmd)

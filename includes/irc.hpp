@@ -46,3 +46,9 @@ std::string getWholeCmd(std::vector<std::string> &cmd);
 
 //Mode
 void    mode(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Part
+void    part(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Quit
+void    cmdQuit(Server &server, Client &client, std::vector<std::string> &cmd);

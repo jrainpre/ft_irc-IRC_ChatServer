@@ -27,10 +27,11 @@ class Server {
 private:
     unsigned int _port;
     std::string _password;
-    unsigned int _server_fd;
+    int _server_fd;
     std::vector<Client*> _clients;
     std::vector<Channel*> _channels;
     std::vector<struct pollfd> _sockets;
+    std::string _startup_time;
 
 public:
     // Constructors
@@ -46,6 +47,7 @@ public:
 
     // Setters
     void setSocketFd(unsigned int fd);
+    void setStartupTime(struct tm *time);
 
     // Functions
     bool startServer();
@@ -91,5 +93,6 @@ public:
 	void    removeClientAndFdByNick(std::string nick);
 	void deleteClientCheckChannels(Client &client);
 	void deleteEmptyChannels();
+    void sendMsgOfDay(Client &client);
 
 };

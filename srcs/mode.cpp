@@ -37,7 +37,7 @@ void    checkMode(Server &server, Client& client, std::vector<std::string> &cmd,
                 return;
             }
             ch.setHasUserlimit(true);
-            ch.setClientLimit(std::stoul(cmd[3], NULL, 10));
+            ch.setClientLimit(strtoul(cmd[3].c_str(), NULL, 10));
             cmd.erase(cmd.begin() + 3);
         }
         else if(mode == 'o' && cmd.size() > 3)
@@ -45,9 +45,9 @@ void    checkMode(Server &server, Client& client, std::vector<std::string> &cmd,
             if(ch.isClientInChannel(cmd[3]) && !server.isOperator(cmd[3], ch.getName()))
             {
                 ch.promoteUser(cmd[3]);
-                server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " +o " + cmd[3] + "\r\n", ch.getUsers(), client);
-                server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " +o " + cmd[3] + "\r\n", ch.getOperators(), client);
-                client.addReply(":" + client.getNick() + "!localhost MODE " + ch.getName() + " +o " + cmd[3] + "\r\n");
+                server.addReplyGroup(MODES(client.getNick(), ch.getName(), "+o", cmd[3]), ch.getOperators(), client);
+                server.addReplyGroup(MODES(client.getNick(), ch.getName(), "+o", cmd[3]), ch.getOperators(), client);
+                client.addReply(MODES(client.getNick(), ch.getName(), "+o", cmd[3]));
             }
             cmd.erase(cmd.begin() + 3);
         }
@@ -69,9 +69,9 @@ void    checkMode(Server &server, Client& client, std::vector<std::string> &cmd,
         {
             if(ch.isClientInChannel(cmd[3]) && server.isOperator(cmd[3], ch.getName()))
             {
-                server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " -o " + cmd[3] + "\r\n", ch.getUsers(), client);
-                server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " -o " + cmd[3] + "\r\n", ch.getOperators(), client);
-                client.addReply(":" + client.getNick() + "!localhost MODE " + ch.getName() + " -o " + cmd[3] + "\r\n");
+                server.addReplyGroup(MODES(client.getNick(), ch.getName(), "-o", cmd[3]), ch.getOperators(), client);
+                server.addReplyGroup(MODES(client.getNick(), ch.getName(), "-o", cmd[3]), ch.getOperators(), client);
+                client.addReply(MODES(client.getNick(), ch.getName(), "-o", cmd[3]));
                 ch.demoteUser(cmd[3]);
             }
             cmd.erase(cmd.begin() + 3);
@@ -110,9 +110,9 @@ void    changeModes(Server &server, Client &client, std::vector<std::string> &cm
     }
     if(curModes != ch.getAllModes())
     {
-        server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " " + ch.getAllModes() + "\r\n", ch.getUsers(), client);
-        server.addReplyGroup(":" + client.getNick() + "!localhost MODE " + ch.getName() + " " + ch.getAllModes() + "\r\n", ch.getOperators(), client);
-        client.addReply(":" + client.getNick() + "!localhost MODE " + ch.getName() + " " + ch.getAllModes() + "\r\n");
+        server.addReplyGroup(MODES(client.getNick(), ch.getName(), ch.getAllModes(), ""), ch.getUsers(), client);
+        server.addReplyGroup(MODES(client.getNick(), ch.getName(), ch.getAllModes(), ""), ch.getOperators(), client);
+        client.addReply(MODES(client.getNick(), ch.getName(), ch.getAllModes(), ""));
     }
 }
 
