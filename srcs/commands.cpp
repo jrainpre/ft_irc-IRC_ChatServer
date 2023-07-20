@@ -82,10 +82,10 @@ void cmdPing(Server& server, Client& client, std::vector<std::string>  &cmd)
 // 	std::cout << "cmdPrivmsg" << std::endl;
 // }
 
-void cmdQuit(Server& server, Client& client, std::vector<std::string>  &cmd)
-{
-	std::cout << "cmdQuit" << std::endl;
-}
+// void cmdQuit(Server& server, Client& client, std::vector<std::string>  &cmd)
+// {
+// 	std::cout << "cmdQuit" << std::endl;
+// }
 
 void cmdTopic(Server& server, Client& client, std::vector<std::string>  &cmd)
 {
