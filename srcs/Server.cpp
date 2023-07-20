@@ -11,6 +11,7 @@ Server::Server(unsigned int port, std::string password) : _port(port), _password
 Server::~Server()
 {
     std::cout << "Exiting Server" << std::endl;
+	this->freeServer();
     if(this->_server_fd > 0)
         close(this->_server_fd);
 }
@@ -386,4 +387,40 @@ bool Server::isUserInChannel(std::string nick, std::string channel)
             return true;
     }
     return false;
+}
+
+void Server::freeClient()
+{
+	std::cout << "size: " << this-> _clients.size() << std::endl;
+	for(int i = 0; i < this->_clients.size(); i++)
+	{
+			std::cout << "Client: " << this->_clients[i]->getNick() << std::endl;
+			std::cout << this->_clients[i]->getSocketFd() << std::endl;
+
+			delete this->_clients[i];
+			std::cout << "Client deleted" << std::endl;
+	}
+}
+
+void Server::freeChannel()
+{
+	for(int i = 0; i < this->_channels.size(); i++)
+	{
+			delete this->_channels[i];
+	}
+}
+
+void Server::freeSockets()
+{
+	for(int i = 0; i < this->_sockets.size(); i++)
+	{
+			close(this->_sockets[i].fd);
+	}
+}
+
+void Server::freeServer()
+{
+	this->freeClient();
+	this->freeChannel();
+	this->freeSockets();
 }

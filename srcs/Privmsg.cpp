@@ -44,12 +44,8 @@ bool Server::sendPrivmsgChannel(std::string channel_name, std::string message, S
 		return true;
 	}
 	server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getOperators(), client);
-	// server.sendReplyGroup(channel.getOperators(), client);
 	if (!op_message)
-	{
 		server.addReplyGroup(SENDPRIVMSG(client.getNick(), client.getUsername(), channel_name, message), channel.getUsers(), client);
-		// server.sendReplyGroup(channel.getUsers(), client);
-	}
 	return true;
 }
 
@@ -76,7 +72,6 @@ void cmdPrivmsg(Server &server, Client &client, std::vector<std::string> &cmd)
 			}
 			Client &recipient_client = server.getClientByNick(recipient_nick);
 			recipient_client.addReply(SENDPRIVMSG(client.getNick(), client.getUsername(), recipient_client.getNick(), message));
-			// recipient_client.sendReply();
 		}
 	}
 }

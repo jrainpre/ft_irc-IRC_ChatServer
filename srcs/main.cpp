@@ -16,6 +16,7 @@
 
 bool g_terminate = false;
 
+
 void signalhandler(int)
 {
 	(void)signal;
