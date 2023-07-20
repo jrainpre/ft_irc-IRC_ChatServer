@@ -82,4 +82,10 @@ public:
     bool isUserInChannel(std::string nick, std::string channel);
     bool sendNoticeChannel(std::string channel_name, std::string message, Server& server, Client& client);
 
+	//free 
+	void freeClient();
+	void freeChannel();
+	void freeSockets();
+	void freeServer();
+
 };
