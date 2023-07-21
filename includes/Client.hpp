@@ -9,13 +9,6 @@
 #include <iostream>
 #include <map>
 
-// enum class ClientState {
-// 	CONNECTED,
-// 	REGISTERED,
-// 	AWAY,
-// 	QUIT
-// };
-
 class Channel;
 class Server;
 

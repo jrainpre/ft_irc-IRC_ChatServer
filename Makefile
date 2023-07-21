@@ -1,76 +1,74 @@
-#  |  |  ___ \    \  |         |
-#  |  |     ) |  |\/ |   _  |  |  /   _ 
-# ___ __|  __/   |   |  (   |    <    __/ 
-#    _|  _____| _|  _| \__,_| _|\_\ \___|
-#                              by jcluzet
-################################################################################
-#                                     CONFIG                                   #
-################################################################################
-NAME        := irc
-CC         := c++
-FLAGS    :=  -g -std=c++98 -Wall -Werror -Wextra
- 
-################################################################################
-#                                 PROGRAM'S SRCS                               #
-################################################################################
+NAME := irc
+CC := c++
+RM := rm -f
+FLAGS := -Wall -Werror -Wextra -std=c++98 -g
 
-SRCS        :=      srcs/main.cpp \
-                          srcs/mode.cpp \
-                          srcs/join.cpp \
-                          srcs/nick.cpp \
-                          srcs/notice.cpp \
-                          srcs/topic.cpp \
-                          srcs/user.cpp \
-                          srcs/Channel.cpp \
-                          srcs/utils.cpp \
-                          srcs/ping.cpp \
-                          srcs/Client.cpp \
-                          srcs/commands.cpp \
-                          srcs/invite.cpp \
-                          srcs/pass.cpp \
-                          srcs/kick.cpp \
-                          srcs/Server.cpp \
-                          srcs/privmsg.cpp \
-                          srcs/part.cpp \
-                          srcs/quit.cpp
-                          
-OBJS        := ${SRCS:.cpp=.o}
+HEADDIR := includes/
+HEADLIST := Channel.hpp \
+			Client.hpp \
+			Server.hpp \
+			utils.hpp \
+			numericsMarcros.hpp \
+			irc.hpp
 
-.cpp.o:
-	${CC} ${FLAGS} -c $< -o ${<:.cpp=.o}
+HEADERS := $(addprefix ${HEADDIR}, ${HEADLIST})
 
-################################################################################
-#                                  Makefile  objs                              #
-################################################################################
+SRCSDIR := srcs/
+SRCSLIST := mode.cpp \
+			main.cpp \
+			join.cpp \
+			nick.cpp \
+			notice.cpp \
+			topic.cpp \
+			user.cpp \
+			Channel.cpp \
+			utils.cpp \
+			ping.cpp \
+			Client.cpp \
+			commands.cpp \
+			invite.cpp \
+			pass.cpp \
+			kick.cpp \
+			Server.cpp \
+			privmsg.cpp \
+			part.cpp \
+			quit.cpp
 
+SRCS := $(addprefix ${SRCSDIR}, ${SRCSLIST})
 
-CLR_RMV		:= \033[0m
-RED		    := \033[1;31m
-GREEN		:= \033[1;32m
-YELLOW		:= \033[1;33m
-BLUE		:= \033[1;34m
-CYAN 		:= \033[1;36m
-RM		    := rm -f
+OBJSDIR := obj/
+OBJSLIST := ${SRCSLIST:.cpp=.o}
+OBJS := $(addprefix ${OBJSDIR}, ${OBJSLIST})
 
-${NAME}:	${OBJS}
-			@echo "$(GREEN)Compilation ${CLR_RMV}of ${YELLOW}$(NAME) ${CLR_RMV}..."
-			${CC} ${FLAGS} -o ${NAME} ${OBJS}
-			@echo "$(GREEN)$(NAME) created[0m ✔️"
+DEPFILES := $(OBJS:.o=.d)
 
-all:		${NAME}
+CYAN := \033[0;36m
+RESET := \033[0m
 
-bonus:		all
+all: ${NAME}
+
+${NAME}: ${OBJS}
+	@echo "${CYAN}Compiling ${NAME} ...${RESET}"
+	${CC} ${FLAGS} ${OBJS} -o ${NAME}
+	@echo "${CYAN}${NAME} Created${RESET}"
+
+-include ${DEPFILES}
+
+${OBJSDIR}%.o: ${SRCSDIR}%.cpp | ${OBJSDIR}
+	${CC} ${FLAGS} -MMD -c $< -o $@
+
+${OBJSDIR}:
+	mkdir -p ${OBJSDIR}
+
+.PHONY: all clean fclean re
 
 clean:
-			@ ${RM} *.o */*.o */*/*.o
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)objs ✔️"
+	@echo "${CYAN}Deleting ${NAME} Objects ...${RESET}"
+	${RM} -r ${OBJSDIR}
 
-fclean:		clean
-			@ ${RM} ${NAME}
-			@ echo "$(RED)Deleting $(CYAN)$(NAME) $(CLR_RMV)binary ✔️"
+fclean: clean
+	@echo "${CYAN}Deleting ${NAME} Executable ...${RESET}"
+	${RM} ${NAME}
 
-re:			fclean all
-
-.PHONY:		all clean fclean re
-
+re: fclean all
 

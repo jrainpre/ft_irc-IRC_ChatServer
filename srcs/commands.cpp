@@ -18,7 +18,7 @@ std::map<std::string, CommandFunction> fillCmd()
 	cmd["PRIVMSG"] = cmdPrivmsg;
 	cmd["QUIT"] = cmdQuit;
 	cmd["TOPIC"] = topic;
-	cmd["USER"] = user;
+	cmd["USER"] = user; 
     return cmd;
 }
 
