@@ -1,6 +1,5 @@
 #include "../includes/Server.hpp"
 
-// extern bool g_terminate;
 //Constructers
 
 Server::Server(unsigned int port, std::string password) : _port(port), _password(password), _server_fd(0)
@@ -99,8 +98,7 @@ bool Server::addClient()
 
     pollClient.events = POLLIN | POLLOUT;
     this->_sockets.push_back(pollClient);
-    const char* hi = "NOTICE :Welcome to the IRC server!\r\n";
-    write(pollClient.fd, hi, strlen(hi));
+    write(pollClient.fd, WELCOME, strlen(WELCOME));
     Client* newClient = new Client(pollClient.fd, *this);
     this->_clients.push_back(newClient);
     return WORKED;
@@ -134,7 +132,6 @@ void    Server::handleMessage(int socket_fd)
 		if (!active_client.cmdIsTerminated())
 			return;
 		//Below Parses commands into std::vector<std::vector<std::string> >
-
 		active_client.parseCmds();
 		active_client.setCmdBuf("");
 		this->cmdLoop(active_client);
@@ -270,7 +267,6 @@ void    Server::cmdLoop(Client &client)
 			return;
 		}
     }
-    // client.sendReply();
     this->sendWelcome(client);
 }
 
@@ -312,7 +308,7 @@ void    Server::sendMsgOfDay(Client &client)
     std::istringstream iss(irc_art);
     std::string line;
     while(std::getline(iss, line))
-        client.addReply(":localhost 372 " + client.getNick() + " " + line + "\r\n");
+        client.addReply(MESSAGE_OF_THE_DAY(client.getNick(), line));
 }  
 
 
@@ -333,11 +329,8 @@ void Server::execCmd(Client &client)
 {	std::map<std::string, CommandFunction> cmdMap = fillCmd();
     std::string cmd = client.getCmds()[0][0];
 
-    if(isUnregisteredCheck(client, cmd) == false)
-    {
-        return;
-    }
-    
+	if (isUnregisteredCheck(client, cmd) == false)
+		return ;
 	if (CmdIsValid(cmd, cmdMap))
 		cmdMap[cmd](*this, client, client.getCmds()[0]);
 	else
@@ -373,7 +366,7 @@ void    Server::joinChannel(Client &client, std::string &channel, std::string &k
 
 void Server::createChannel(Client& client, std::string& channel, std::string& key)
 {
-    Channel* ch = new Channel(channel, key, client); // Allocate the Channel object dynamically
+    Channel* ch = new Channel(channel, key, client);
     ch->sendWelcome(client);
     this->_channels.push_back(ch);
 	client.addChannel(ch);
@@ -497,6 +490,8 @@ void Server::deleteClientCheckChannels(Client &client)
 
 void Server::setStartupTime(struct tm *time)
 {
+	//date
     this->_startup_time = toString(time->tm_mday) + "."  + toString(time->tm_mon + 1) + "." + toString(time->tm_year + 1900);
+	//time
     this->_startup_time += " | " + toString(time->tm_hour) + ":" + toString(time->tm_min) + ":" + toString(time->tm_sec);
 }

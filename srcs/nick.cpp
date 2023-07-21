@@ -1,5 +1,5 @@
 #include "../includes/irc.hpp"
-
+/*
 // The NICK command is used to give the client a nickname or change the previous one.
 
 // If the server receives a NICK command from a client where the desired nickname is already in use on the network, it should issue an ERR_NICKNAMEINUSE 
@@ -25,6 +25,7 @@
 //     ERR_ERRONEUSNICKNAME (432)
 //     ERR_NICKNAMEINUSE (433)
 //     ERR_NICKCOLLISION (436)
+*/
 
 bool    isNickInUse(Server &server, std::string &nick)
 {
@@ -46,7 +47,6 @@ bool    isValidNick(std::string &nick)
         return WORKED;
 }
 
-//have to check the "Client" in error msg when no nick name is given
 void    nick(Server &server, Client &client, std::vector<std::string> &cmd)
 {
     if(cmd.size() == 1)

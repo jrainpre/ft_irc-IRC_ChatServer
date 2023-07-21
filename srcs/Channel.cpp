@@ -104,7 +104,7 @@ void Channel::sendJoinMsgs(std::string clientNick)
     {
         if(this->getOperators()[i]->getNick() != clientNick)
         {
-            this->getOperators()[i]->addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getOperators()[i]->addReply(JOIN_MSG(clientNick, this->getName()));
             this->getOperators()[i]->sendReply();
         }
     }
@@ -113,7 +113,7 @@ void Channel::sendJoinMsgs(std::string clientNick)
     {
         if(this->getUsers()[i]->getNick() != clientNick)
         {
-            this->getUsers()[i]->addReply(":" + clientNick + "!localhost JOIN " + this->getName() + "\r\n");
+            this->getUsers()[i]->addReply(JOIN_MSG(clientNick, this->getName()));
         }
     }
 }

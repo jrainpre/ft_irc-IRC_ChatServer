@@ -16,6 +16,8 @@
 #define RPL_CREATED(datetime, nick) (":localhost 003 " + nick + " :This server was created " + datetime + "\r\n")
 #define RPL_MYINFO(servername, version, usermodes, channelmodes, nick) (":localhost 004 " + nick + " " + servername + " " + version + " " + usermodes + " " + channelmodes + "\r\n")
 #define RPL_ISUPPORT(tokens, nick) (":localhost 005 " + nick + " " + tokens + " :are supported by this server\r\n")
+//":localhost 372 " + client.getNick() + " " + line + "\r\n"
+#define MESSAGE_OF_THE_DAY(line, nick) (":localhost 372 " + nick + " " + line + "\r\n")
 
 //Nick ErrorMsgs
 
@@ -36,6 +38,7 @@
 #define ERR_INVITEONLYCHAN(client, channel) (":localhost 473 " + client + " " + channel + " :Cannot join channel (+i)\r\n")
 #define ERR_BADCHANNELKEY(client, channel) (":localhost 475 " + client + " " + channel + " :Cannot join channel (+k)\r\n")
 #define ERR_TOOMANYCHANNELS(client, channel) (":localhost 405 " + client + " " + channel + " :You have joined too many channels\r\n") 
+#define JOIN_MSG(client, channel) (":" + client + "!localhost JOIN " + channel + "\r\n")
 
 #define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " " + channel + " :" + topic + "\r\n") 
 #define RPL_NAMREPLY(client, channel) (":localhost 353 " + client + " = " + channel + " :")
@@ -49,15 +52,10 @@
 //PrivMsg
 #define SENDPRIVMSG(nickname, username, recipient, message)(":" + nickname + "!" + username + "@localhost PRIVMSG " + recipient + " " + message + "\r\n")
 #define ERR_NOSUCHNICK(client, nickname) (":localhost 401 " + client + " " + nickname + " :No such nick/channel" + "\r\n")
-//"<client> <channel> :Cannot send to channel"
 #define ERR_CANNOTSENDTOCHAN(client, channel) (":localhost 404 " + client + " " + channel + " :Cannot send to channel" + "\r\n")
-//"<client> :No recipient given (<command>)"
 #define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
-//"<client> :No text to send"
 #define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
-//"<client> :No recipient given (<command>)"
 #define ERR_NORECIPIENT(client, command) (":localhost 411 " + client + " :No recipient given (" + command + ")" + "\r\n")
-//"<client> :No text to send"
 #define ERR_NOTEXTTOSEND(client) (":localhost 412 " + client + " :No text to send" + "\r\n")
 
 //Notice
@@ -78,5 +76,4 @@
 #define RPL_CHANNELMODEIS(client, channel, modestring, arguments) (":localhost 324 " + client + " " + channel + " " + modestring + " " + arguments + "\r\n")
 
 //Quit
-//:NickName!UserName@HostName QUIT :Quit message goes here\r\n
 #define SENDQUIT(nickname, username, message)(":" + nickname + "!" + username + "@localhost QUIT " + message + "\r\n")
