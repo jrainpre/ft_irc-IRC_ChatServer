@@ -1,7 +1,7 @@
 #include "../includes/irc.hpp"
 #include "../includes/numericsMacros.hpp"
 
-void cmdNotice(Server &server, Client &client, std::vector<std::string> &cmd)
+void notice(Server &server, Client &client, std::vector<std::string> &cmd)
 {
     if (cmd.size() < 2)
         client.addReply(ERR_NORECIPIENT(client.getNick(), "NOTICE"));

@@ -43,10 +43,10 @@ void    topic(Server &server, Client &client, std::vector<std::string> &cmd);
 bool isChannelOperatorMessage(std::string channel);
 std::string getChannelName(std::string channel);
 std::string getWholeCmd(std::vector<std::string> &cmd);
-void    cmdPrivmsg(Server &server, Client &client, std::vector<std::string> &cmd);
+void    privmsg(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //Notice
-void cmdNotice(Server& server, Client& client, std::vector<std::string>  &cmd);
+void notice(Server& server, Client& client, std::vector<std::string>  &cmd);
 
 //Mode
 void    mode(Server &server, Client &client, std::vector<std::string> &cmd);
@@ -55,7 +55,7 @@ void    mode(Server &server, Client &client, std::vector<std::string> &cmd);
 void    part(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //Quit
-void    cmdQuit(Server &server, Client &client, std::vector<std::string> &cmd);
+void    quit(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //cmds
 typedef void (*CommandFunction)(Server& server, Client& client, std::vector<std::string>  &cmd);

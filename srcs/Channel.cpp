@@ -176,6 +176,7 @@ void Channel::deleteClient(std::string nick)
     {
         if(this->_users[i]->getNick() == nick)
         {
+            this->_users[i]->removeChannel(this->getName());
             this->_users.erase(this->_users.begin() + i);
             break;
         }
@@ -184,6 +185,7 @@ void Channel::deleteClient(std::string nick)
     {
         if(this->_operators[i]->getNick() == nick)
         {
+            this->_operators[i]->removeChannel(this->getName());
             this->_operators.erase(this->_operators.begin() + i);
             break;
         }

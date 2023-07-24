@@ -49,7 +49,7 @@ bool Server::sendPrivmsgChannel(std::string channel_name, std::string message, S
 	return true;
 }
 
-void cmdPrivmsg(Server &server, Client &client, std::vector<std::string> &cmd)
+void privmsg(Server &server, Client &client, std::vector<std::string> &cmd)
 {
 	if (cmd.size() < 2)
 		client.addReply(ERR_NORECIPIENT(client.getNick(), "PRIVMSG"));

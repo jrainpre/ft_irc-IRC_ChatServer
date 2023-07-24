@@ -1,4 +1,4 @@
-NAME := irc
+NAME := ircsrv
 CC := c++
 RM := rm -f
 FLAGS := -Wall -Werror -Wextra -std=c++98 -g
@@ -61,6 +61,15 @@ ${OBJSDIR}:
 	mkdir -p ${OBJSDIR}
 
 .PHONY: all clean fclean re
+
+val: all
+	make -C ./ clean
+	valgrind --leak-check=full \
+	--show-leak-kinds=all \
+	--track-origins=yes \
+	--verbose \
+	--log-file=valgrind-out.txt \
+		./$(NAME) 6667 pass123
 
 clean:
 	@echo "${CYAN}Deleting ${NAME} Objects ...${RESET}"

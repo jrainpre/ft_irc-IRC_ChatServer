@@ -6,10 +6,17 @@ void    kickUser(Server &server, Client &client, std::string user, std::string c
         client.addReply(ERR_NOSUCHCHANNEL(client.getNick(), channel));
     if(server.isOperator(client.getNick(), channel) == false)
         client.addReply(ERR_CHANOPRIVSNEEDED(client.getNick(), channel));
-    else if(server.isUserInChannel(user, channel))
+    else if(!server.isUserInChannel(user, channel))
         client.addReply(ERR_USERNOTINCHANNEL(client.getNick(), user, channel));
     else
+    {
+        Channel &ch = server.getChannelByName(channel);
         client.addReply(KICK(client.getNick(), user, channel, msg));
+        server.addReplyGroup(KICK(client.getNick(), user, channel, msg), ch.getUsers(), client);
+        server.addReplyGroup(KICK(client.getNick(), user, channel, msg), ch.getOperators(), client);
+        ch.deleteClient(user);
+        server.deleteEmptyChannels();
+    }
 }
 
 void    kick(Server &server, Client &client, std::vector<std::string> &cmd)

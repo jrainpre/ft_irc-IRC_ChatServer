@@ -1,6 +1,6 @@
 #include "../includes/irc.hpp"
 
-void cmdQuit(Server &server, Client &client, std::vector<std::string> &cmd)
+void quit(Server &server, Client &client, std::vector<std::string> &cmd)
 {
 	std::string message = getWholeCmd(cmd);
 

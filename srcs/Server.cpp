@@ -92,11 +92,11 @@ bool Server::addClient()
     if (pollClient.fd < 0)
     {
         std::cout << "accept() failed" << std::endl;
-        // Function which closes all FD in vector
         return FAILED;
     }
 
     pollClient.events = POLLIN | POLLOUT;
+    pollClient.revents = 0;
     this->_sockets.push_back(pollClient);
     write(pollClient.fd, WELCOME, strlen(WELCOME));
     Client* newClient = new Client(pollClient.fd, *this);
@@ -131,7 +131,6 @@ void    Server::handleMessage(int socket_fd)
 		active_client.setCmdBuf(active_client.getCmdBuf() + buffer);
 		if (!active_client.cmdIsTerminated())
 			return;
-		//Below Parses commands into std::vector<std::vector<std::string> >
 		active_client.parseCmds();
 		active_client.setCmdBuf("");
 		this->cmdLoop(active_client);
@@ -147,6 +146,7 @@ bool    Server::serverLoop()
     pollfd serverPoll;
     serverPoll.fd = this->_server_fd;
     serverPoll.events = POLLIN | POLLOUT;
+    serverPoll.revents = 0;
     this->_sockets.push_back(serverPoll);
 
     std::cout << "Waiting for connections..." << std::endl;
@@ -156,10 +156,8 @@ bool    Server::serverLoop()
         if(poll(this->_sockets.data(), this->_sockets.size(), -42) < 0 && !g_terminate)
         {
             std::cout << "Poll() failed" << std::endl;
-            //Function which closes all FD in vector
             return FAILED;
         }
-
         for(size_t i = 0; i < this->_sockets.size(); i++)
         {
             if(this->_sockets[i].revents & POLLIN)
@@ -263,6 +261,7 @@ void    Server::cmdLoop(Client &client)
         client.getCmds().erase(client.getCmds().begin());
 		if (client.getIsQuited())
 		{
+            this->deleteClientCheckChannels(client);
 			this->removeClientAndFdByNick(client.getNick());
 			return;
 		}

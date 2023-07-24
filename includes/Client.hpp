@@ -69,7 +69,7 @@ public:
 	Client& operator=(const Client& other);
 	bool cmdIsTerminated();
 	void sendReply();
-
+	void removeChannel(std::string channel);
 };
 
 
