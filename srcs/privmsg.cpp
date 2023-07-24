@@ -1,4 +1,4 @@
-#include "../includes/commands.hpp"
+#include "../includes/irc.hpp"
 #include "../includes/numericsMacros.hpp"
 
 typedef void (*CommandFunction)(Server &server, Client &client, std::vector<std::string> &cmd);

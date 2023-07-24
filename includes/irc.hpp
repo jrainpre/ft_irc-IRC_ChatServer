@@ -1,6 +1,5 @@
 #pragma once
 
-#include "commands.hpp"
 #include "utils.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
@@ -13,6 +12,8 @@
 
 #define FAILED 1
 #define WORKED 0
+
+#define WELCOME "NOTICE :Welcome to the IRC server!\r\n"
 
 //Join
 void    checkChannel(Server &server, Client &client, std::string channel, std::string key);
@@ -29,7 +30,6 @@ void    ping(Server &server, Client &client, std::vector<std::string> &cmd);
 void    user(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //Kick
-std::string addKickMsgs(std::vector<std::string> &cmd);
 void    kickUser(Server &server, Client &client, std::string user, std::string channel, std::string msg);
 void    kick(Server &server, Client &client, std::vector<std::string> &cmd);
 
@@ -43,6 +43,10 @@ void    topic(Server &server, Client &client, std::vector<std::string> &cmd);
 bool isChannelOperatorMessage(std::string channel);
 std::string getChannelName(std::string channel);
 std::string getWholeCmd(std::vector<std::string> &cmd);
+void    cmdPrivmsg(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//Notice
+void cmdNotice(Server& server, Client& client, std::vector<std::string>  &cmd);
 
 //Mode
 void    mode(Server &server, Client &client, std::vector<std::string> &cmd);
@@ -52,3 +56,8 @@ void    part(Server &server, Client &client, std::vector<std::string> &cmd);
 
 //Quit
 void    cmdQuit(Server &server, Client &client, std::vector<std::string> &cmd);
+
+//cmds
+typedef void (*CommandFunction)(Server& server, Client& client, std::vector<std::string>  &cmd);
+std::map<std::string, CommandFunction> fillCmd();
+bool CmdIsValid(std::string cmd_string, std::map<std::string, CommandFunction>& cmd);

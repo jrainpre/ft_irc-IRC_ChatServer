@@ -1,5 +1,5 @@
 #include "../includes/Client.hpp"
-#include "../includes/commands.hpp"
+#include "../includes/irc.hpp"
 
 Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _state(0), _mode(0), _pass_match(false), _is_registered(false), _is_welcome_send(false), _is_quited(false), _server(server)
 {
@@ -20,7 +20,7 @@ void Client::parseCmds()
 {
     std::vector<std::string> lines;
     
-    lines = split(cmdBuf, "\n", false); // changed to false, delete backslash n
+    lines = split(cmdBuf, "\n", false);
     for (size_t i = 0; i < lines.size(); ++i)
     {
         std::vector<std::string> split_line = split(lines[i], " ", false);

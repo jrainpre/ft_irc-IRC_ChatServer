@@ -44,55 +44,48 @@ public:
     unsigned int getSocketFd();
     std::vector<Client*>& getClients() { return this->_clients; }
     std::vector<Channel*>& getChannels() { return this->_channels; }
-
+	Client& getClientByFd(int socket_fd);
+    Client& getClientByNick(std::string nick);
+    Channel& getChannelByName(std::string& name);
     // Setters
     void setSocketFd(unsigned int fd);
     void setStartupTime(struct tm *time);
-
-    // Functions
+    // gerneral functions
     bool startServer();
     bool serverLoop();
-    bool addClient();
+	void cmdLoop(Client& client);
+    void execCmd(Client& client);
     void handleMessage(int socket_fd);
     void handleWrite(int socket_fd);
-    Client& getClientByFd(int socket_fd);
-    void cmdLoop(Client& client);
-    Client& getClientByNick(std::string nick);
-    void execCmd(Client& client);
-    // void unregisteredCmds(Client& active_client);
-    void sendWelcome(Client& active_client);
-    bool isUnregisteredCheck(Client& client, std::string cmd);
-
-    bool channelExists(std::string& name);
+    void sendMsgOfDay(Client &client);
+	//channel functions
     void joinChannel(Client& client, std::string& channel, std::string& key);
     void createChannel(Client& client, std::string& channel, std::string& key);
-    bool isNickInUse(std::string& nick);
-    Channel& getChannelByName(std::string& name);
-
-    bool isOperator(std::string nick, std::string channel);
-
-    class ExpextionNoMatchingClient {
-    public:
-        virtual const char* what() const throw() { return "Server Error"; }
-    };
-    void removeClientAndFd(int fd);
-    void unregisteredCmds();
-    void registeredCmds(Client& active_client);
-    void sendReplyGroup(std::vector<Client*> clients, Client& sender);
-    void addReplyGroup(std::string msg, std::vector<Client*> clients, Client& sender);
+    bool channelExists(std::string& name);
     bool sendPrivmsgChannel(std::string channel_name, std::string message, Server& server, Client& client);
     bool isUserInChannel(std::string nick, std::string channel);
     bool sendNoticeChannel(std::string channel_name, std::string message, Server& server, Client& client);
-
+	void deleteEmptyChannels();
+	void sendReplyGroup(std::vector<Client*> clients, Client& sender);
+    void addReplyGroup(std::string msg, std::vector<Client*> clients, Client& sender);
+	//client functions
+    void sendWelcome(Client& active_client);
+    bool isUnregisteredCheck(Client& client, std::string cmd);
+    bool addClient();
+	bool isNickInUse(std::string& nick);
+    bool isOperator(std::string nick, std::string channel);
+   	void removeClientAndFd(int fd);
+	void removeClientAndFdByNick(std::string nick);
+	void deleteClientCheckChannels(Client &client);
 	//free 
 	void freeClient();
 	void freeChannel();
 	void freeSockets();
 	void freeServer();
 
-	void    removeClientAndFdByNick(std::string nick);
-	void deleteClientCheckChannels(Client &client);
-	void deleteEmptyChannels();
-    void sendMsgOfDay(Client &client);
+	   class ExpextionNoMatchingClient {
+    public:
+        virtual const char* what() const throw() { return "Server Error"; }
+    };
 
 };

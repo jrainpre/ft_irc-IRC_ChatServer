@@ -1,6 +1,5 @@
 #include "../includes/irc.hpp"
 
-
 void    kickUser(Server &server, Client &client, std::string user, std::string channel, std::string msg)
 {
     if(server.channelExists(channel) == false)

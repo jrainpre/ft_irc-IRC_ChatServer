@@ -9,13 +9,6 @@
 #include <iostream>
 #include <map>
 
-// enum class ClientState {
-// 	CONNECTED,
-// 	REGISTERED,
-// 	AWAY,
-// 	QUIT
-// };
-
 class Channel;
 class Server;
 
@@ -71,14 +64,8 @@ public:
 	
 	//Functions
 	void addReply(std::string msg) {this->replyCmd += msg;};
-	void addReplyGroup(std::vector<Client> &clients, std::string msg);
 	void addChannel(Channel *channel); 
-	void removeChannel(std::string channel);
-	bool check_nick(std::string nick);
-	bool check_username(std::string username);
 	void parseCmds();
-	void execCmds();
-	void registeredCmds();
 	Client& operator=(const Client& other);
 	bool cmdIsTerminated();
 	void sendReply();
