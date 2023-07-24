@@ -17,7 +17,7 @@
 #define RPL_MYINFO(servername, version, usermodes, channelmodes, nick) (":localhost 004 " + nick + " " + servername + " " + version + " " + usermodes + " " + channelmodes + "\r\n")
 #define RPL_ISUPPORT(tokens, nick) (":localhost 005 " + nick + " " + tokens + " :are supported by this server\r\n")
 //":localhost 372 " + client.getNick() + " " + line + "\r\n"
-#define MESSAGE_OF_THE_DAY(line, nick) (":localhost 372 " + nick + " " + line + "\r\n")
+#define MESSAGE_OF_THE_DAY(nick, line) (":localhost 372 " + nick + " :" + line + "\r\n")
 
 //Nick ErrorMsgs
 

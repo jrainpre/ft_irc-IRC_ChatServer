@@ -8,7 +8,8 @@ Client::Client(int socket_fd, Server &server): _socket_fd(socket_fd), _state(0),
 
 Client::~Client()
 {
-
+	if(this->_socket_fd > 0)
+		close(_socket_fd);
 }
 
 void Client::addChannel(Channel *channel)
@@ -64,4 +65,16 @@ bool Client::cmdIsTerminated()
 	if (this->cmdBuf.find("\n") != std::string::npos)
 		return true;
 	return false;
+}
+
+void Client::removeChannel(std::string channel)
+{
+	for(size_t i = 0; this->getChannels().size(); i++)
+	{
+		if(this->getChannels()[i]->getName() == channel)
+		{
+			this->getChannels().erase(this->getChannels().begin() + i);
+			return;
+		}
+	}
 }

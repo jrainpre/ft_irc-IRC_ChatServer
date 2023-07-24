@@ -11,12 +11,12 @@ std::map<std::string, CommandFunction> fillCmd()
 	cmd["KICK"] = kick;
 	cmd["MODE"] = mode;
 	cmd["NICK"] = nick;
-	cmd["NOTICE"] = cmdNotice;
+	cmd["NOTICE"] = notice;
 	cmd["PART"] = part;
 	cmd["PASS"] = pass;
 	cmd["PING"] = ping;
-	cmd["PRIVMSG"] = cmdPrivmsg;
-	cmd["QUIT"] = cmdQuit;
+	cmd["PRIVMSG"] = privmsg;
+	cmd["QUIT"] = quit;
 	cmd["TOPIC"] = topic;
 	cmd["USER"] = user; 
     return cmd;
