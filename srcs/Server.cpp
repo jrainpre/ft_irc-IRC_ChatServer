@@ -211,7 +211,10 @@ void    Server::removeClientAndFdByNick(std::string nick)
     for(unsigned long i = 0; i < this->_sockets.size(); i++)
     {
         if(client.getSocketFd() == this->_sockets[i].fd)
+        {
             this->_sockets.erase(this->_sockets.begin() + i);
+            break;
+        }
     }
     for(unsigned long i = 0; i < this->_clients.size(); i++)
     {
@@ -219,6 +222,7 @@ void    Server::removeClientAndFdByNick(std::string nick)
         {
             delete this->_clients[i];
             this->_clients.erase(_clients.begin() + i);
+            break;
         }
     }
 }

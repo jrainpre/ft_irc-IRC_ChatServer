@@ -69,7 +69,8 @@ val: all
 	--track-origins=yes \
 	--verbose \
 	--log-file=valgrind-out.txt \
-		./$(NAME) 6667 pass123
+	#--track-fds=yes \
+	./$(NAME) 6667 pass123
 
 clean:
 	@echo "${CYAN}Deleting ${NAME} Objects ...${RESET}"
