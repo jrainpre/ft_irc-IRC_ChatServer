@@ -127,7 +127,7 @@ void    Server::handleMessage(int socket_fd)
             return;
 		}
 		buffer[len] = 0;
-		std::cout << buffer << std::endl;
+		std::cout << "Recv: " << buffer << std::endl;
 		active_client.setCmdBuf(active_client.getCmdBuf() + buffer);
 		if (!active_client.cmdIsTerminated())
 			return;
@@ -297,12 +297,12 @@ void    Server::sendMsgOfDay(Client &client)
     "I::::::::I  R::::::RRRRRR:::::R     CC:::::::::::::::C\n"
     "II::::::II  RR:::::R     R:::::R   C:::::CCCCCCCC::::C\n"
     "  I::::I      R::::R     R:::::R  C:::::C       CCCCCC\n"
-    "  I::::I      R::::R     R:::::RC:::::C\n"
+    "  I::::I      R::::R     R:::::R C:::::C\n"
     "  I::::I      R::::RRRRRR:::::R  C:::::C\n"
     "  I::::I      R:::::::::::::RR   C:::::C\n"
     "  I::::I      R::::RRRRRR:::::R  C:::::C\n"
-    "  I::::I      R::::R     R:::::RC:::::C\n"
-    "  I::::I      R::::R     R:::::RC:::::C\n"
+    "  I::::I      R::::R     R:::::R C:::::C\n"
+    "  I::::I      R::::R     R:::::R C:::::C\n"
     "  I::::I      R::::R     R:::::R  C:::::C       CCCCCC\n"
     "II::::::II  RR:::::R     R:::::R   C:::::CCCCCCCC::::C\n"
     "I::::::::I  R::::::R     R:::::R    CC:::::::::::::::C\n"
@@ -312,8 +312,7 @@ void    Server::sendMsgOfDay(Client &client)
     std::string line;
     while(std::getline(iss, line))
         client.addReply(MESSAGE_OF_THE_DAY(client.getNick(), line));
-}  
-
+}
 
 bool    Server::isUnregisteredCheck(Client &client, std::string cmd)
 {
@@ -337,7 +336,7 @@ void Server::execCmd(Client &client)
 	if (CmdIsValid(cmd, cmdMap))
 		cmdMap[cmd](*this, client, client.getCmds()[0]);
 	else
-		std::cout << "Command " << cmd << "is not valid" << std::endl;
+		std::cout << "Command " << cmd << " is ignroed/not valid" << std::endl;
 }
 
 bool Server::channelExists(std::string &name)
