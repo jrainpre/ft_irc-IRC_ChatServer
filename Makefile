@@ -1,4 +1,4 @@
-NAME := ircsrv
+NAME := ircserv
 CC := c++
 RM := rm -f
 FLAGS := -Wall -Werror -Wextra -std=c++98 -g
