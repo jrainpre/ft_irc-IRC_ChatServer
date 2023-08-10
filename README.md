@@ -1,4 +1,4 @@
-``bash
+```bash
 IIIIIIIIII  RRRRRRRRRRRRRRRRR            CCCCCCCCCCCCC
 I::::::::I  R::::::::::::::::R        CCC::::::::::::C
 I::::::::I  R::::::RRRRRR:::::R     CC:::::::::::::::C
@@ -53,10 +53,10 @@ To run FT_IRC, you need the following prerequisites:
  
 ## Installation
  
-Clone the FT_IRC repository from GitHub:
+Clone the ft_irc repository from GitHub:
  
 ```bash
-git clone https://github.com/JakobKlocker/IRC_Server.git
+git clone https://github.com/jrainpre/IRC_Server.git
 ```
  
 Navigate to the project directory:
