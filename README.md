@@ -56,7 +56,7 @@ To run FT_IRC, you need the following prerequisites:
 Clone the ft_irc repository from GitHub:
  
 ```bash
-git clone https://github.com/jrainpre/IRC_Server.git
+git clone https://github.com/jrainpre/ft_irc.git
 ```
  
 Navigate to the project directory:
